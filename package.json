@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/three": "^0.180.0",
+    "autoprefixer": "^10.4.21",
+    "gsap": "^3.11.5",
+    "postcss": "^8.5.6",
+    "react-router-dom": "^7.9.4",
+    "tailwindcss": "^4.1.14",
+    "three": "^0.180.0",
+    "typed.js": "^2.0.16"
+  }
+}
