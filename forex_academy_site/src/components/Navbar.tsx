@@ -8,6 +8,7 @@ const Navbar: React.FC = () => {
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
+  // Navigation items
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'About Mentor', path: '/about' },
@@ -19,17 +20,17 @@ const Navbar: React.FC = () => {
 
   // GSAP Animations
   useEffect(() => {
-    // Logo animation: fade in and slight scale
+    // Logo fade-in and scale
     gsap.fromTo(
       logoRef.current,
-      { opacity: 0, scale: 0.8 },
-      { opacity: 1, scale: 1, duration: 1, ease: 'power2.out' }
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }
     );
 
-    // CTA button pulse
+    // CTA button subtle pulse
     gsap.to(ctaRef.current, {
-      scale: 1.05,
-      duration: 1,
+      scale: 1.03,
+      duration: 1.5,
       repeat: -1,
       yoyo: true,
       ease: 'power1.inOut',
@@ -46,44 +47,31 @@ const Navbar: React.FC = () => {
   }, [isOpen]);
 
   return (
-    <nav className="bg-nav-gradient text-white sticky top-0 z-50 shadow-neon-glow">
+    <nav className="bg-gradient-to-r from-navy to-darkNavy text-white sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main Navbar Container */}
         <div className="flex justify-between items-center h-20">
-          {/* Logo with Animated Currency Symbol */}
+          {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <h1
               ref={logoRef}
-              className="font-montserrat font-extrabold text-3xl text-gold tracking-wide"
+              className="font-montserrat font-extrabold text-3xl text-gold tracking-wide flex items-center"
             >
-              RoadMoney{' '}
-              <span className="text-neonGreen animate-pulse">₵</span> Forex
+              RoadMoney
+              <span className="ml-2 text-neonGreen animate-pulse">₵</span>
             </h1>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-10">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `font-montserrat font-semibold text-lg tracking-wide hover:text-neonGreen hover:shadow-neon-glow transition-all duration-300 ${
-                    isActive ? 'text-neonGreen border-b-2 border-neonGreen' : ''
+                  `font-montserrat font-medium text-lg tracking-wide transition-all duration-300 hover:text-neonGreen hover:scale-105 ${
+                    isActive ? 'text-neonGreen border-b-2 border-neonGreen' : 'text-white'
                   }`
-                }
-                onMouseEnter={(e) =>
-                  gsap.to(e.currentTarget, {
-                    scale: 1.1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                  })
-                }
-                onMouseLeave={(e) =>
-                  gsap.to(e.currentTarget, {
-                    scale: 1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                  })
                 }
               >
                 {item.name}
@@ -91,31 +79,25 @@ const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center">
             <NavLink
               ref={ctaRef}
               to="/mentorship"
-              className="bg-neonGreen text-navy font-montserrat font-bold py-3 px-6 rounded-full shadow-gold-glow hover:bg-gold hover:text-navy transition-all duration-300"
+              className="bg-neonGreen text-navy font-montserrat font-bold py-2 px-6 rounded-full shadow-[0_0_10px_rgba(57,255,20,0.5)] hover:bg-gold hover:text-navy hover:shadow-[0_0_10px_rgba(255,215,0,0.5)] transition-all duration-300"
             >
               Join Now
             </NavLink>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gold focus:outline-none hover:text-neonGreen transition-colors duration-300"
+              className="text-gold hover:text-neonGreen focus:outline-none transition-colors duration-300"
               aria-label="Toggle menu"
             >
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isOpen ? (
                   <path
                     strokeLinecap="round"
@@ -135,51 +117,37 @@ const Navbar: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Menu with Glassmorphism */}
-        {isOpen && (
-          <div
-            ref={mobileMenuRef}
-            className="md:hidden bg-navy/80 backdrop-blur py-6 absolute top-20 left-0 w-full shadow-neon-glow"
-          >
-            {navItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                className={({ isActive }) =>
-                  `block py-3 px-6 font-montserrat font-semibold text-lg tracking-wide hover:text-neonGreen transition-all duration-300 ${
-                    isActive ? 'text-neonGreen' : ''
-                  }`
-                }
-                onClick={() => setIsOpen(false)}
-                onMouseEnter={(e) =>
-                  gsap.to(e.currentTarget, {
-                    scale: 1.05,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                  })
-                }
-                onMouseLeave={(e) =>
-                  gsap.to(e.currentTarget, {
-                    scale: 1,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                  })
-                }
-              >
-                {item.name}
-              </NavLink>
-            ))}
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden bg-navy/90 backdrop-blur-md py-6 w-full absolute top-20 left-0 shadow-[0_0_10px_rgba(57,255,20,0.3)]"
+        >
+          {navItems.map((item) => (
             <NavLink
-              to="/mentorship"
-              className="block py-3 px-6 mx-6 mt-4 bg-neonGreen text-navy font-montserrat font-bold rounded-full shadow-gold-glow hover:bg-gold hover:text-navy transition-all duration-300"
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `block py-3 px-6 font-montserrat font-medium text-lg tracking-wide transition-all duration-300 hover:text-neonGreen hover:pl-8 ${
+                  isActive ? 'text-neonGreen' : 'text-white'
+                }`
+              }
               onClick={() => setIsOpen(false)}
             >
-              Join Now
+              {item.name}
             </NavLink>
-          </div>
-        )}
-      </div>
+          ))}
+          <NavLink
+            to="/mentorship"
+            className="block py-3 px-6 mx-6 mt-4 bg-neonGreen text-navy font-montserrat font-bold rounded-full shadow-[0_0_10px_rgba(57,255,20,0.5)] hover:bg-gold hover:text-navy hover:shadow-[0_0_10px_rgba(255,215,0,0.5)] transition-all duration-300"
+            onClick={() => setIsOpen(false)}
+          >
+            Join Now
+          </NavLink>
+        </div>
+      )}
     </nav>
   );
 };
