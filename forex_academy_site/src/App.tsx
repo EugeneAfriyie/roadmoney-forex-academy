@@ -1,21 +1,28 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Home from './Pages/Home/Home';
+import { ThemeProvider } from './Context/ThemeContext';
+// Import other pages when created
+// import About from './pages/About';
+// import Mentorship from './pages/Mentorship';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<div>Home Page (Hero coming next)</div>} />
-        <Route path="/about" element={<div>About Mentor Page</div>} />
-        <Route path="/forex" element={<div>What is Forex Page</div>} />
-        <Route path="/mentorship" element={<div>Mentorship Program Page</div>} />
-        <Route path="/testimonials" element={<div>Testimonials Page</div>} />
-        <Route path="/contact" element={<div>Contact Page</div>} />
-      </Routes>
-    </div>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {/* Add routes for other pages */}
+          {/* <Route path="/about" element={<About />} /> */}
+          {/* <Route path="/mentorship" element={<Mentorship />} /> */}
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
