@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Menu, X } from 'lucide-react';
 import { ThemeContext } from '../context/ThemeContext';
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +19,10 @@ const Header: React.FC = () => {
   const bgClass = theme === 'dark' ? 'bg-[#0b0f19]' : 'bg-[#f8f9fb]';
   const textClass = theme === 'dark' ? 'text-[#ffffffcc]' : 'text-[#1a1a1a]';
   const accentClass = 'text-[#00c896]';
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <motion.header
@@ -32,7 +37,16 @@ const Header: React.FC = () => {
         <h1 className={`text-2xl font-bold ${accentClass} font-montserrat`}>
           RoadMoney Forex Academy
         </h1>
-        <div className="flex items-center space-x-6">
+        {/* Hamburger Button for Mobile */}
+        <button
+          className={`md:hidden p-2 rounded-full ${textClass} hover:bg-[#00c896]/20`}
+          onClick={toggleMenu}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
           <ul className={`flex space-x-6 items-center ${textClass}`}>
             {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
               <li key={link}>
@@ -64,6 +78,48 @@ const Header: React.FC = () => {
           </button>
         </div>
       </nav>
+      {/* Mobile Menu */}
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: isMenuOpen ? 'auto' : 0, opacity: isMenuOpen ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className={`md:hidden ${bgClass} overflow-hidden`}
+      >
+        <ul className={`flex flex-col items-center py-4 space-y-4 ${textClass}`}>
+          {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
+            <li key={link}>
+              <a
+                href={`/${link.toLowerCase()}`}
+                className="hover:text-[#00c896] transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {link}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a
+              href="/mentorship"
+              className="px-4 py-2 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Join Now
+            </a>
+          </li>
+          <li>
+            <button
+              onClick={() => {
+                toggleTheme();
+                setIsMenuOpen(false);
+              }}
+              className="p-2 rounded-full hover:bg-opacity-20 hover:bg-[#00c896]"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+          </li>
+        </ul>
+      </motion.div>
     </motion.header>
   );
 };
