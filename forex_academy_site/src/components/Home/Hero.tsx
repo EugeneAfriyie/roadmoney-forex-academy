@@ -1,189 +1,228 @@
-// Eugene Afriyie UEB3502023
-import React, { useContext, useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useContext, useState, useEffect } from 'react';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import Globe from 'react-globe.gl';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ThemeContext } from '../../context/ThemeContext';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-const slides = [
-  {
-    title: 'Learn to Trade Smart, Confident & Profitable.',
-    description: 'Join RoadMoney Forex Academy — where real traders are made.',
-    btn1: 'Join Mentorship',
-    btn2: 'Watch Live Trading Demo',
-    link1: '/mentorship',
-    link2: '/demo',
-    bg: 'from-[#0b0f19] via-[#121826] to-[#0b0f19]',
-  },
-  {
-    title: 'Master the Market with Proven Strategies.',
-    description: 'From prop firm secrets to live trading — gain the edge you need.',
-    btn1: 'Start Learning',
-    btn2: 'View Course Outline',
-    link1: '/mentorship',
-    link2: '/courses',
-    bg: 'from-[#101820] via-[#17212f] to-[#101820]',
-  },
-  {
-    title: 'Build Confidence. Trade Consistently. Win Big.',
-    description: 'Turn your passion into profit with real-world trading mentorship.',
-    btn1: 'Get Started',
-    btn2: 'Contact Admin',
-    link1: '/apply',
-    link2: '/contact',
-    bg: 'from-[#091218] via-[#14202d] to-[#091218]',
-  },
-];
+const slideVariants: Variants = {
+  enter: { x: '100%', opacity: 0 },
+  center: { x: 0, opacity: 1 },
+  exit: { x: '-100%', opacity: 0 },
+};
 
 const Hero: React.FC = () => {
   const { theme } = useContext(ThemeContext);
-  const [index, setIndex] = useState(0);
-  const [typedText, setTypedText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const touchStart = useRef<number | null>(null);
-
-  const current = slides[index];
-
-  // Typing effect
-  useEffect(() => {
-    if (isPaused) return;
-
-    const text = current.title;
-    let timer: NodeJS.Timeout;
-
-    if (!isDeleting && charIndex < text.length) {
-      timer = setTimeout(() => {
-        setTypedText(text.substring(0, charIndex + 1));
-        setCharIndex((prev) => prev + 1);
-      }, 80);
-    } else if (isDeleting && charIndex > 0) {
-      timer = setTimeout(() => {
-        setTypedText(text.substring(0, charIndex - 1));
-        setCharIndex((prev) => prev - 1);
-      }, 40);
-    } else {
-      setTimeout(() => setIsDeleting(!isDeleting), 1500);
-      if (isDeleting) {
-        setIndex((prev) => (prev + 1) % slides.length);
-      }
-    }
-
-    return () => clearTimeout(timer);
-  }, [charIndex, isDeleting, isPaused, index]);
-
-  // Swipe for mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStart.current === null) return;
-    const diff = touchStart.current - e.changedTouches[0].clientX;
-    if (diff > 50) handleNext();
-    if (diff < -50) handlePrev();
-    touchStart.current = null;
-  };
-
-  const handleNext = () => setIndex((prev) => (prev + 1) % slides.length);
-  const handlePrev = () =>
-    setIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const bgClass =
     theme === 'dark'
-      ? `bg-gradient-to-b ${current.bg}`
+      ? 'bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19]'
       : 'bg-gradient-to-b from-[#f8f9fb] via-[#e0e2e7] to-[#f8f9fb]';
   const textClass = theme === 'dark' ? 'text-[#ffffffcc]' : 'text-[#1a1a1a]';
+  const overlayClass = theme === 'dark' ? 'bg-black/80' : 'bg-gray-800/70';
+
+  const globeImage = theme === 'dark' ? '//unpkg.com/three-globe/example/img/earth-dark.jpg' : '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg';
+
+  const slides = [
+    // Slide 1: Initial content with background image
+    <motion.div
+      key="slide1"
+      className="relative flex flex-col items-center justify-center h-full w-full px-4"
+      variants={slideVariants}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      transition={{ duration: 0.5 }}
+    >
+      <div
+        className="absolute inset-0 z-0 w-full h-full bg-[url('https://res.cloudinary.com/djeorsh5d/image/upload/v1760410146/104108b7-dd55-4172-b3f5-079da4bb7ea6.png')] bg-cover bg-center"
+      />
+      <div className={`absolute inset-0 z-10 w-full h-full ${overlayClass}`} />
+      <div className="relative z-20 flex flex-col items-center justify-center">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-4xl md:text-5xl font-bold text-[#00c896]"
+        >
+          Learn to Trade Smart, Confident & Profitable.
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-lg md:text-xl mt-4 max-w-2xl mx-auto"
+        >
+          Join RoadMoney Forex Academy — where real traders are made.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-8 space-x-4"
+        >
+          <a
+            href="/mentorship"
+            className="inline-block px-6 py-3 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
+          >
+            Join Mentorship
+          </a>
+          <a
+            href="/demo"
+            className="inline-block px-6 py-3 border border-[#00c896] text-[#00c896] rounded-2xl hover:scale-105 transition-transform"
+          >
+            Watch Live Trading Demo
+          </a>
+        </motion.div>
+      </div>
+    </motion.div>,
+
+    // Slide 2: 3D Globe with Text (unchanged)
+    <motion.div
+      key="slide2"
+      className="relative flex items-center justify-center h-full w-full"
+      variants={slideVariants}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      transition={{ duration: 0.5 }}
+    >
+      <Globe
+        globeImageUrl={globeImage}
+        backgroundColor="rgba(0,0,0,0)"
+        showAtmosphere={true}
+        atmosphereColor="#00c896"
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onGlobeReady={(globe: any) => {
+          const controls = globe.controls();
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = 0.5;
+        }}
+      />
+      <div className="absolute flex flex-col items-center justify-center px-4">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-3xl md:text-4xl font-bold text-[#00c896]"
+        >
+          Master the Global Markets
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-lg md:text-xl mt-4 max-w-2xl mx-auto"
+        >
+          Trade with confidence using proven strategies taught by experts.
+        </motion.p>
+      </div>
+    </motion.div>,
+
+    // Slide 3: Motivational CTA with background image
+    <motion.div
+      key="slide3"
+      className="relative flex flex-col items-center justify-center h-full w-full px-4"
+      variants={slideVariants}
+      initial="enter"
+      animate="center"
+      exit="exit"
+      transition={{ duration: 0.5 }}
+    >
+      <div
+        className="absolute inset-0 z-0 w-full h-full bg-[url('https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg')] bg-cover bg-center"
+      />
+      <div className={`absolute inset-0 z-10 w-full h-full ${overlayClass}`} />
+      <div className="relative z-20 flex flex-col items-center justify-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-3xl md:text-4xl font-bold text-[#00c896]"
+        >
+          Transform Your Trading Journey
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-lg md:text-xl mt-4 max-w-2xl mx-auto"
+        >
+          Start today with RoadMoney Forex Academy and unlock your potential.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-8"
+        >
+          <a
+            href="/mentorship"
+            className="inline-block px-6 py-3 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
+          >
+            Enroll Today
+          </a>
+        </motion.div>
+      </div>
+    </motion.div>,
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 5000); // Auto-slide every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
+  };
 
   return (
     <section
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       className={`relative flex flex-col items-center justify-center h-screen text-center overflow-hidden ${bgClass} ${textClass} font-montserrat transition-colors duration-500`}
     >
-      {/* Moving Background Wave */}
-      <motion.div
-        className="absolute inset-0 opacity-20"
-        animate={{
-          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-        style={{
-          backgroundImage:
-            theme === 'dark'
-              ? 'url("/assets/forex-wave-dark.svg")'
-              : 'url("/assets/forex-wave-light.svg")',
-          backgroundSize: 'cover',
-        }}
-      />
-
       <AnimatePresence mode="wait">
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -30 }}
-          transition={{ duration: 0.8 }}
-          className="px-6 z-10"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#00c896] mb-4">
-            {typedText}
-            <span className="animate-pulse">|</span>
-          </h1>
-
-          <p className="text-lg md:text-xl mt-4 max-w-2xl mx-auto">
-            {current.description}
-          </p>
-
-          <div className="mt-8 space-x-4">
-            <a
-              href={current.link1}
-              className="inline-block px-6 py-3 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
-            >
-              {current.btn1}
-            </a>
-            <a
-              href={current.link2}
-              className="inline-block px-6 py-3 border border-[#00c896] text-[#00c896] rounded-2xl hover:scale-105 transition-transform"
-            >
-              {current.btn2}
-            </a>
-          </div>
-        </motion.div>
+        {slides[currentIndex]}
       </AnimatePresence>
-
-      {/* Arrow Controls */}
-      <div className="absolute inset-x-0 flex justify-between items-center px-6 md:px-10 text-[#00c896]">
-        <button
-          onClick={handlePrev}
-          className="p-2 hover:scale-110 transition-transform"
-        >
-          <ArrowLeft size={28} />
-        </button>
-        <button
-          onClick={handleNext}
-          className="p-2 hover:scale-110 transition-transform"
-        >
-          <ArrowRight size={28} />
-        </button>
-      </div>
-
-      {/* Dot Indicators */}
-      <div className="absolute bottom-10 flex gap-2 z-10">
+      {/* Navigation Dots */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => setIndex(i)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              i === index ? 'bg-[#00c896]' : 'bg-gray-500/40'
-            }`}
+            className={`w-3 h-3 rounded-full ${i === currentIndex ? 'bg-[#00c896]' : 'bg-gray-500'}`}
+            onClick={() => setCurrentIndex(i)}
+            aria-label={`Go to slide ${i + 1}`}
           />
         ))}
       </div>
+      {/* Navigation Buttons */}
+      <motion.button
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-[#00c896]/20 hover:bg-[#00c896]/40 transition-colors"
+        onClick={handlePrev}
+        aria-label="Previous slide"
+      >
+        <ChevronLeft size={24} className={textClass} />
+      </motion.button>
+      <motion.button
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-[#00c896]/20 hover:bg-[#00c896]/40 transition-colors"
+        onClick={handleNext}
+        aria-label="Next slide"
+      >
+        <ChevronRight size={24} className={textClass} />
+      </motion.button>
     </section>
   );
 };
