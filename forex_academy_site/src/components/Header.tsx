@@ -1,8 +1,7 @@
-// src/components/Header.tsx
 import React, { useContext, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
-import { ThemeContext } from '../Context/ThemeContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -33,28 +32,37 @@ const Header: React.FC = () => {
         <h1 className={`text-2xl font-bold ${accentClass} font-montserrat`}>
           RoadMoney Forex Academy
         </h1>
-        <ul className={`flex space-x-6 items-center ${textClass}`}>
-          {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
-            <li key={link}>
-              <a
-                href={`/${link.toLowerCase()}`}
-                className="hover:text-[#00c896] transition-colors relative group"
-              >
-                {link}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00c896] group-hover:w-full transition-all" />
-              </a>
-            </li>
-          ))}
-          <li>
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-opacity-20 hover:bg-[#00c896]"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-          </li>
-        </ul>
+        <div className="flex items-center space-x-6">
+          <ul className={`flex space-x-6 items-center ${textClass}`}>
+            {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
+              <li key={link}>
+                <a
+                  href={`/${link.toLowerCase()}`}
+                  className="hover:text-[#00c896] transition-colors relative group"
+                >
+                  {link}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00c896] group-hover:w-full transition-all" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <motion.a
+            href="/mentorship"
+            className="px-4 py-2 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Join Now
+          </motion.a>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-opacity-20 hover:bg-[#00c896]"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+        </div>
       </nav>
     </motion.header>
   );

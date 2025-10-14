@@ -1,8 +1,8 @@
 // src/pages/Home.tsx
 import React, { useContext } from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion, type Variants } from "framer-motion";
 import { CheckCircle } from 'lucide-react';
-import { ThemeContext } from '../../Context/ThemeContext';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const Home: React.FC = () => {
   const { theme } = useContext(ThemeContext);

@@ -1,7 +1,7 @@
 // src/components/Footer.tsx
 import React, { useContext } from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { ThemeContext } from '../Context/ThemeContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Footer: React.FC = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
