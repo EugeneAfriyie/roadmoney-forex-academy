@@ -3,8 +3,9 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Globe, AlertTriangle, Star } from 'lucide-react';
 import Tilt from 'react-parallax-tilt';
 // import { ThemeContext } from '../context/ThemeProvider';
-import AnimatedBackground from '../Home/AnimatedBackground';
+// import AnimatedBackground from '../Home/AnimatedBackground';
 import { ThemeContext } from '../../../context/ThemeContext';
+import AnimatedBackground from './AnimatedBackground';
 
 interface ForexCardProps {
   title: string;
