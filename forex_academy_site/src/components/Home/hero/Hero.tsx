@@ -14,7 +14,7 @@ const slides = [
     button2: 'Watch Live Trading Demo',
     icon: <BarChart3 size={26} className="text-[#00c896]" />,
     background: 'image', // Static image
-    imageUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236aa?w=1920&h=1080&fit=crop',
+    imageUrl: 'https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg',
   },
   {
     id: 2,
@@ -80,7 +80,7 @@ const HeroCarousel: React.FC = () => {
         {slides[current].background === 'image' && (
           <motion.div
             key="image-bg"
-            className={`absolute inset-0 bg-[url('${slides[current].imageUrl}')] bg-cover bg-center ${overlayClass}`}
+            className={`absolute inset-0 bg-[url('${slides[current].imageUrl}')] bg-cover bg-center ${overlayClass} bg-black/90 `}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
