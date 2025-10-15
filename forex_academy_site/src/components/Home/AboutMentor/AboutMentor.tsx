@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import MentorImage from './MentorImage';
 import StatsCard from './StatsCard';
-import { ThemeContext } from '../../context/ThemeContext';
+import { ThemeContext } from '../../../context/ThemeContext';
 
 const AboutMentor: React.FC = () => {
   const { theme } = useContext(ThemeContext);

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Globe from 'react-globe.gl';
 import { ArrowRight, BarChart3, Target, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ThemeContext } from '../../context/ThemeContext';
+import { ThemeContext } from '../../../context/ThemeContext';
 // import { ThemeContext } from '../context/ThemeProvider';
 
 const slides = [

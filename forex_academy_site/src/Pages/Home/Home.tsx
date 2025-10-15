@@ -1,7 +1,7 @@
 import React from 'react';
-import Hero from '../../components/Home/Hero';
-import AboutMentor from '../../components/Home/AboutMentor';
-import WhatIsForex from '../../components/Home/ForexCard';
+import Hero from '../../components/Home/hero/Hero';
+import AboutMentor from '../../components/Home/AboutMentor/AboutMentor';
+import WhatIsForex from '../../components/Home/WhatIsForex/ForexCard';
 
 const Home: React.FC = () => {
   return (
