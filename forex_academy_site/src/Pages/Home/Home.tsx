@@ -3,6 +3,7 @@ import Hero from '../../components/Home/hero/Hero';
 import AboutMentor from '../../components/Home/AboutMentor/AboutMentor';
 import WhatIsForex from '../../components/Home/WhatIsForex/ForexCard';
 import Quotes from '../../components/Home/QuoteCard/QuoteCard';
+import WhyForex from '../../components/Home/WhatIsForex/ForexCard';
 
 const Home: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const Home: React.FC = () => {
       <AboutMentor />
       <WhatIsForex />
       <Quotes />
+       <WhyForex />
     </div>
   );
 };
