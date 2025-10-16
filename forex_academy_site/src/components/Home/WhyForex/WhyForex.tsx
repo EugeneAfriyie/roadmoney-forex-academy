@@ -1,24 +1,12 @@
 // Eugene Afriyie UEB3502023
-// WhyForex.tsx
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Clock, DollarSign, Globe } from 'lucide-react';
-import SectionHeader from '../QuoteCard/SectionHeader'; // adjust path if needed
+import SectionHeader from '../QuoteCard/SectionHeader';
 import { ThemeContext } from '../../../context/ThemeContext';
 import AnimatedChartCanvas from './AnimatedChartCanvas';
+// import AnimatedChartCanvas from './Animations/AnimatedChartCanvas';
 
-/**
- * AnimatedChartCanvas
- * - Pure-code canvas animation that draws a subtle trading grid + moving "price" line and occasional bars.
- * - Theme-aware colors via `theme` prop.
- * - Pauses when not visible (IntersectionObserver) to save CPU.
- */
-
-
-/**
- * WhyForex component
- * - main content with animated canvas background
- */
 const WhyForex: React.FC = () => {
   const { theme } = useContext(ThemeContext);
   const prefersReducedMotion = useReducedMotion();
@@ -31,7 +19,6 @@ const WhyForex: React.FC = () => {
       : 'bg-gradient-to-b from-[#f8f9fb] via-[#eef1f6] to-[#f8f9fb]';
   const textClass = theme === 'dark' ? 'text-[#ffffffcc]' : 'text-[#0b0f0f]';
 
-  // reasons content
   const reasons = [
     {
       title: 'Flexible Work Schedule',
@@ -64,7 +51,6 @@ const WhyForex: React.FC = () => {
       {/* Animated canvas background */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <AnimatedChartCanvas theme={theme as 'dark' | 'light'} />
-        {/* soft overlay to unify color tone */}
         <motion.div
           style={{ translateY }}
           className={`absolute inset-0 ${theme === 'dark' ? 'bg-black/10' : 'bg-white/6'} mix-blend-overlay`}
@@ -114,7 +100,6 @@ const WhyForex: React.FC = () => {
             viewport={{ once: true }}
             className="relative w-full h-[320px] sm:h-[420px] rounded-2xl overflow-hidden border border-transparent"
           >
-            {/* A semi-foreground "live snapshot" card to make it look active */}
             <div className="absolute inset-6 rounded-xl bg-gradient-to-b from-black/25 to-transparent backdrop-blur-md border border-white/6 z-20 p-4 flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <div>
@@ -182,18 +167,56 @@ const WhyForex: React.FC = () => {
               ))}
             </ul>
 
+            {/* ---- Mentorship Teaser (animated) ---- */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+              viewport={{ once: true }}
+              className="mb-6"
+            >
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.9 }}
+                className="text-sm italic text-gray-200 dark:text-gray-300 max-w-xl"
+                aria-hidden={prefersReducedMotion}
+              >
+                <span className="text-[#00c896] font-semibold">At RoadMoney,</span> we don’t just teach Forex — we mentor you to master it.
+              </motion.p>
+              {/* subtle type/wave underline that animates */}
+              <motion.div
+                initial={{ width: 0 }}
+                whileInView={{ width: '100%' }}
+                transition={{ duration: 0.9, delay: 0.4, ease: 'easeOut' }}
+                viewport={{ once: true }}
+                className="h-[2px] bg-gradient-to-r from-[#00c896] to-[#00ffcc] rounded mt-3 max-w-sm"
+                aria-hidden
+              />
+            </motion.div>
+
+            {/* ---- Primary CTA: Join the Movement ---- */}
             <motion.a
               href="/mentorship"
               role="button"
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              whileHover={{ scale: 1.03 }}
+              whileHover={{ scale: 1.03, boxShadow: '0 8px 28px rgba(0,200,150,0.18)' }}
               whileTap={{ scale: 0.98 }}
-              className="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-[#00c896] to-[#00ffcc] text-black font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#00c896]"
-              aria-label="Start your forex journey"
+              transition={{ duration: 0.35 }}
+              className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#00c896] to-[#00ffcc] text-black font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#00c896]"
+              aria-label="Join the Movement and start mentorship"
             >
-              Start Your Forex Journey
+              <span>Join the Movement</span>
+              <motion.span
+                className="inline-block text-sm"
+                initial={{ x: 0 }}
+                whileHover={{ x: 6 }}
+                transition={{ duration: 0.35 }}
+                aria-hidden
+              >
+                →
+              </motion.span>
             </motion.a>
           </motion.div>
         </div>
