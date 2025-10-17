@@ -8,6 +8,9 @@ import Testimonials from '../../components/Testimonials';
 import WhyMentorshipMatters from '../../components/WhyMentorshipMatters';
 import ContinuousWhyMentorship from '../../components/Test/ContinuousWhyMentorship';
 import FullScreenWhyMentorship from '../../components/Test/FullScreenWhyMentorship';
+import WhatYouGet from '../../components/Home/WhatYouGet/WhatYouGet';
+// import WhatYouGet from '../../components/Test/WhatYouGet';
+import WhatYouGetSplit from '../../components/Home/WhatYouGet/WhatYouGetSplit';
 
 const Home: React.FC = () => {
   return (
@@ -21,6 +24,8 @@ const Home: React.FC = () => {
        <WhyMentorshipMatters />
        {/* <ContinuousWhyMentorship /> */}
        <FullScreenWhyMentorship />
+       <WhatYouGetSplit />
+       <WhatYouGet />
     </div>
   );
 };
