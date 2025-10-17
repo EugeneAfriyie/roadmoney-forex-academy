@@ -17,8 +17,8 @@ const Home: React.FC = () => {
       <WhatIsForex />
       <Quotes />
        <WhyForex />
-       <Testimonials />
-       {/* <WhyMentorshipMatters /> */}
+       {/* <Testimonials /> */}
+       <WhyMentorshipMatters />
        {/* <ContinuousWhyMentorship /> */}
        <FullScreenWhyMentorship />
     </div>
