@@ -11,11 +11,13 @@ import WhyMentorshipMatters from '../../components/WhyMentorshipMatters';
 // import WhatYouGet from '../../components/Home/WhatYouGet/WhatYouGet';
 // import WhatYouGet from '../../components/Test/WhatYouGet';
 import WhatYouGetSplit from '../../components/Home/WhatYouGet/WhatYouGetSplit';
+import Services from '../../components/Home/Services/Services';
 
 const Home: React.FC = () => {
   return (
     <div>
       <Hero />
+      <Services />
       <AboutMentor />
       <WhatIsForex />
       <Quotes />
