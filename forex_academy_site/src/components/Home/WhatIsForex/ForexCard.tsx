@@ -38,7 +38,7 @@ const ForexCard: React.FC<ForexCardProps> = ({ title, description, icon, index }
             initial={{ scale: 0 }}
             whileInView={{ scale: 1 }}
             transition={{ duration: 0.5, delay: index * 0.2 + 0.1, type: 'spring', stiffness: 100 }}
-            whileHover={{ animate: { boxShadow: '0 0 20px rgba(0,200,150,0.2)' } }}
+            whileHover={{  boxShadow: '0 0 20px rgba(0,200,150,0.2)' }}
           >
             {icon}
           </motion.div>

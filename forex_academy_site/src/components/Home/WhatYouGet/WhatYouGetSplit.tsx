@@ -1,11 +1,7 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Video, Clock, Award } from "lucide-react";
-import { ThemeContext } from "../../../context/ThemeContext";
 
-/**
- * FeatureCard (right side)
- */
 const FeatureCard: React.FC<{
   title: string;
   desc: string;
@@ -40,11 +36,7 @@ const FeatureCard: React.FC<{
   );
 };
 
-/**
- * Main Split Combo component with toggle
- */
 const WhatYouGetSplit: React.FC = () => {
-  const { theme } = useContext(ThemeContext);
   const [mentorshipType, setMentorshipType] = useState<"online" | "in-person">("online");
 
   const mentorshipDetails = useMemo(
@@ -54,29 +46,13 @@ const WhatYouGetSplit: React.FC = () => {
         tagline: "Master trading from anywhere",
         highlight: "4+ Live Sessions",
         mode: "Virtual",
-        image: "https://via.placeholder.com/600x400?text=Online+Mentorship",
+        image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1751247112/PREG1_pqz5ik.jpg",
         badge: "Exclusive Program",
         features: [
-          {
-            title: "1-on-1 Video Calls",
-            desc: "Personalized coaching via Zoom to refine your trading edge.",
-            Icon: Users,
-          },
-          {
-            title: "Live Market Streams",
-            desc: "Join live trading sessions and learn in real-time.",
-            Icon: Video,
-          },
-          {
-            title: "Risk & Psychology Training",
-            desc: "Master risk management and trading psychology online.",
-            Icon: Clock,
-          },
-          {
-            title: "Online Community Access",
-            desc: "Lifetime access to our virtual trading community.",
-            Icon: Award,
-          },
+          { title: "1-on-1 Video Calls", desc: "Personalized coaching via Zoom to refine your trading edge.", Icon: Users },
+          { title: "Live Market Streams", desc: "Join live trading sessions and learn in real-time.", Icon: Video },
+          { title: "Risk & Psychology Training", desc: "Master risk management and trading psychology online.", Icon: Clock },
+          { title: "Online Community Access", desc: "Lifetime access to our virtual trading community.", Icon: Award },
         ],
       },
       "in-person": {
@@ -84,29 +60,13 @@ const WhatYouGetSplit: React.FC = () => {
         tagline: "Immersive trading experience",
         highlight: "2-Day Workshop",
         mode: "In-Person",
-        image: "https://via.placeholder.com/600x400?text=In-Person+Mentorship",
+        image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1751247112/PREG1_pqz5ik.jpg",
         badge: "Elite Training",
         features: [
-          {
-            title: "In-Person Coaching",
-            desc: "Face-to-face mentorship to build your trading skills.",
-            Icon: Users,
-          },
-          {
-            title: "Live Trading Floor",
-            desc: "Experience real-time trading in a professional setting.",
-            Icon: Video,
-          },
-          {
-            title: "Advanced Risk Workshops",
-            desc: "Hands-on training for risk and psychology mastery.",
-            Icon: Clock,
-          },
-          {
-            title: "Exclusive Community Events",
-            desc: "Join in-person events and network with traders.",
-            Icon: Award,
-          },
+          { title: "In-Person Coaching", desc: "Face-to-face mentorship to build your trading skills.", Icon: Users },
+          { title: "Live Trading Floor", desc: "Experience real-time trading in a professional setting.", Icon: Video },
+          { title: "Advanced Risk Workshops", desc: "Hands-on training for risk and psychology mastery.", Icon: Clock },
+          { title: "Exclusive Community Events", desc: "Join in-person events and network with traders.", Icon: Award },
         ],
       },
     }),
@@ -119,9 +79,9 @@ const WhatYouGetSplit: React.FC = () => {
     <section
       id="what-you-get"
       aria-labelledby="what-you-get-heading"
-      className={`relative py-20 px-4 sm:px-6 lg:px-12 font-montserrat transition-colors duration-500 mt-20`}
+      className="relative py-20 px-4 sm:px-6 lg:px-12 font-montserrat transition-colors duration-500 mt-20"
     >
-      {/* Main Heading and Intro */}
+      {/* Intro */}
       <div className="max-w-7xl mx-auto text-center mb-12">
         <motion.h2
           id="what-you-get-heading"
@@ -138,11 +98,11 @@ const WhatYouGetSplit: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.08 }}
           className="text-base sm:text-lg text-slate-400 max-w-3xl mx-auto"
         >
-          Unlock your trading potential with our expertly designed mentorship programs, tailored for both virtual and in-person learning. Choose your path to success below.
+          Unlock your trading potential with our expertly designed mentorship programs, tailored for both virtual and in-person learning.
         </motion.p>
       </div>
 
-      {/* Toggle Buttons */}
+      {/* Toggle */}
       <div className="max-w-7xl mx-auto mb-8 flex justify-center gap-4">
         <button
           onClick={() => setMentorshipType("online")}
@@ -151,7 +111,6 @@ const WhatYouGetSplit: React.FC = () => {
               ? "bg-[#00c896] text-black"
               : "bg-white/5 text-white/70 hover:bg-white/10"
           }`}
-          aria-label="View Online Mentorship Details"
         >
           Online Mentorship
         </button>
@@ -162,21 +121,30 @@ const WhatYouGetSplit: React.FC = () => {
               ? "bg-[#00c896] text-black"
               : "bg-white/5 text-white/70 hover:bg-white/10"
           }`}
-          aria-label="View In-Person Mentorship Details"
         >
           In-Person Mentorship
         </button>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        {/* Left: Image with Overlay */}
+      {/* Split Content */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center" aria-live="polite">
+        
+        {/* --- Left: Crossfade + Blur Image --- */}
         <div className="relative w-full h-[420px] md:h-[520px] rounded-2xl overflow-hidden border border-white/6">
-          <img
-            src={currentDetails.image}
-            alt={`${currentDetails.title} preview`}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          {/* Foreground overlay UI */}
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={mentorshipType}
+              src={currentDetails.image}
+              alt={`${currentDetails.title} preview`}
+              initial={{ opacity: 0, filter: "blur(10px) scale(1.05)" }}
+              animate={{ opacity: 1, filter: "blur(0px) scale(1)" }}
+              exit={{ opacity: 0, filter: "blur(10px) scale(1.05)" }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </AnimatePresence>
+
+          {/* Overlay UI */}
           <div className="absolute inset-6 rounded-xl p-4 z-10 flex flex-col justify-between pointer-events-none bg-black/20">
             <div className="flex items-center justify-between">
               <div>
@@ -192,74 +160,75 @@ const WhatYouGetSplit: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="text-xs text-white/70">Delivery: {currentDetails.mode}</div>
               <div className="flex gap-2">
-                <button
-                  className="px-3 py-1 rounded-full bg-[#00c896] text-black font-semibold text-xs pointer-events-auto"
-                  aria-label={`Join ${currentDetails.title.toLowerCase()}`}
-                >
+                <button className="px-3 py-1 rounded-full bg-[#00c896] text-black font-semibold text-xs pointer-events-auto">
                   Join Now
                 </button>
-                <button
-                  className="px-3 py-1 rounded-full bg-white/5 text-white text-xs pointer-events-auto"
-                  aria-label={`View ${currentDetails.title.toLowerCase()} curriculum`}
-                >
+                <button className="px-3 py-1 rounded-full bg-white/5 text-white text-xs pointer-events-auto">
                   View Curriculum
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Subtle corner badge */}
+          {/* Badge */}
           <div className="absolute top-4 left-4 z-20">
-            <div className="px-3 py-1 rounded-full bg-black/40 text-white text-xs">{currentDetails.badge}</div>
+            <div className="px-3 py-1 rounded-full bg-black/40 text-white text-xs">
+              {currentDetails.badge}
+            </div>
           </div>
         </div>
 
-        {/* Right: Feature Grid */}
-        <div>
-          <motion.h2
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-2xl sm:text-3xl font-bold mb-4"
+        {/* --- Right: Text + Features --- */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={mentorshipType}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 }}
           >
-            What You’ll Get
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.08 }}
-            className="text-sm text-slate-400 mb-6"
-          >
-            {mentorshipType === "online"
-              ? "A comprehensive online mentorship program to build your trading edge through virtual coaching and community."
-              : "An immersive in-person mentorship experience with hands-on trading and exclusive networking opportunities."}
-          </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-2xl sm:text-3xl font-bold mb-4"
+            >
+              What You’ll Get
+            </motion.h2>
 
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <AnimatePresence>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.08 }}
+              className="text-sm text-slate-400 mb-6"
+            >
+              {mentorshipType === "online"
+                ? "A comprehensive online mentorship program to build your trading edge through virtual coaching and community."
+                : "An immersive in-person mentorship experience with hands-on trading and exclusive networking opportunities."}
+            </motion.p>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {currentDetails.features.map((f, idx) => (
                 <FeatureCard key={f.title} index={idx} title={f.title} desc={f.desc} Icon={f.Icon} />
               ))}
-            </AnimatePresence>
-          </ul>
+            </ul>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-6"
-          >
-            <a
-              href="/mentorship"
-              className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-gradient-to-r from-[#00c896] to-[#00ffcc] text-black font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#00c896]"
-              aria-label={`Apply for ${currentDetails.title.toLowerCase()}`}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-6"
             >
-              Join {currentDetails.title}
-              <span className="text-sm">→</span>
-            </a>
+              <a
+                href="/mentorship"
+                className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-gradient-to-r from-[#00c896] to-[#00ffcc] text-black font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#00c896]"
+              >
+                Join {currentDetails.title}
+                <span className="text-sm">→</span>
+              </a>
+            </motion.div>
           </motion.div>
-        </div>
+        </AnimatePresence>
       </div>
     </section>
   );

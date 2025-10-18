@@ -1,5 +1,5 @@
-// src/context/ThemeProvider.tsx
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import type { ReactNode } from 'react';
 
 interface ThemeContextType {
   theme: 'light' | 'dark';
@@ -10,6 +10,15 @@ export const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
   toggleTheme: () => {},
 });
+
+// Custom hook to use the ThemeContext
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
 
 interface ThemeProviderProps {
   children: ReactNode;

@@ -1,11 +1,13 @@
+// QuoteCard.tsx
 // Eugene Afriyie UEB3502023
-import React, { useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion';
+import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import Tilt from 'react-parallax-tilt';
 import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import { ThemeContext } from '../../../context/ThemeContext';
-import DBackground from '../../3DBackground';
+import ThreeDBackground from '../../3DBackground';
 
 interface QuoteItem {
   quote: string;
@@ -13,7 +15,7 @@ interface QuoteItem {
 }
 
 interface QuotesProps {
-  /** optional callback when active quote index changes (e.g. to sync background intensity) */
+  /** Optional callback when active quote index changes (e.g., to sync background intensity) */
   onActiveChange?: (index: number) => void;
 }
 
@@ -21,39 +23,32 @@ const AUTO_ROTATE_MS = 6000;
 
 const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
   const { theme } = useContext(ThemeContext);
-  const prefersReducedMotion = useReducedMotion();
-  const containerRef = useRef<HTMLElement | null>(null);
-  const inView = useInView(containerRef, { once: false, margin: '-20% 0px -20% 0px' }); // consider visible when center in viewport
+  const prefersReducedMotion = useReducedMotion() ?? false;
+  const { ref: containerRef, inView = true } = useInView({
+    threshold: 0,
+    rootMargin: '-20% 0px -20% 0px', // Fixed: Changed 'margin' to 'rootMargin'
+  });
 
   const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(!inView); // paused when not in view
-  const autoRotateRef = useRef<number | null>(null);
+  const [isPaused, setIsPaused] = useState(!inView);
+  const autoRotateRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const quotes = useMemo<QuoteItem[]>(
-    () => [
-      {
-        quote: 'The goal of a successful trader is to make the best trades. Money is secondary.',
-        author: 'Alexander Elder',
-      },
-      {
-        quote: "In trading, it’s not about how much you make, but how much you don’t lose.",
-        author: 'Pro Trader',
-      },
-      {
-        quote: 'Success in trading comes from discipline, patience, and a solid strategy.',
-        author: 'RoadMoney Mentor',
-      },
-    ],
-    []
-  );
+  const quotes: QuoteItem[] = [
+    {
+      quote: 'The goal of a successful trader is to make the best trades. Money is secondary.',
+      author: 'Alexander Elder',
+    },
+    {
+      quote: "In trading, it's not about how much you make, but how much you don't lose.",
+      author: 'Pro Trader',
+    },
+    {
+      quote: 'Success in trading comes from discipline, patience, and a solid strategy.',
+      author: 'RoadMoney Mentor',
+    },
+  ];
 
-  // Preload next quote text into memory (tiny optimization)
-  useEffect(() => {
-    const next = (current + 1) % quotes.length;
-    void quotes[next]; // reference to keep it ready
-  }, [current, quotes]);
-
-  // notify parent (background) about active index changes
+  // Notify parent (background) about active index changes
   useEffect(() => {
     if (typeof onActiveChange === 'function') onActiveChange(current);
   }, [current, onActiveChange]);
@@ -66,21 +61,21 @@ const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
   useEffect(() => {
     if (isPaused) {
       if (autoRotateRef.current) {
-        window.clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current);
         autoRotateRef.current = null;
       }
       return;
     }
 
     if (!autoRotateRef.current) {
-      autoRotateRef.current = window.setInterval(() => {
+      autoRotateRef.current = setInterval(() => {
         setCurrent((prev) => (prev + 1) % quotes.length);
       }, AUTO_ROTATE_MS);
     }
 
     return () => {
       if (autoRotateRef.current) {
-        window.clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current);
         autoRotateRef.current = null;
       }
     };
@@ -104,10 +99,10 @@ const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
     return () => window.removeEventListener('keydown', onKey);
   }, [handleNext, handlePrev]);
 
-  // small accessibility text for current item
+  // Small accessibility text for current item
   const ariaCurrentText = `Quote ${current + 1} of ${quotes.length}: ${quotes[current].quote} by ${quotes[current].author}`;
 
-  // theme-based classes
+  // Theme-based classes
   const bgClass =
     theme === 'dark'
       ? 'bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19]'
@@ -120,17 +115,17 @@ const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
     <section
       id="quotes"
       aria-labelledby="quotes-heading"
-      ref={containerRef as any}
+      ref={containerRef}
       className={`relative py-20 overflow-hidden ${bgClass} ${textClass} font-montserrat transition-colors duration-500`}
       role="region"
       aria-roledescription="carousel"
     >
-      {/* Decorative interactive 3D background component (can accept props if you implement them) */}
-      <DBackground activeIndex={current} />
+      {/* Decorative interactive 3D background component */}
+      <ThreeDBackground activeIndex={current} />
 
-      {/* floating accent blob (theme-aware) */}
+      {/* Floating accent blob (theme-aware) */}
       <motion.div
-        aria-hidden
+        aria-hidden="true"
         className={`absolute bottom-[-15%] right-[-10%] w-[60vw] h-[60vw] rounded-full blur-[180px] opacity-20`}
         animate={{
           x: ['0%', '-20%', '10%', '0%'],
@@ -189,10 +184,15 @@ const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
                       transition={{ duration: 0.5, type: 'spring', stiffness: 80 }}
                       className="mx-auto mb-2 w-10 h-10 flex items-center justify-center rounded-full"
                     >
-                      <Quote size={26} className="text-[#00c896] dark:text-[#00ffcc] drop-shadow-[0_0_6px_rgba(0,200,150,0.35)]" />
+                      <Quote
+                        size={26}
+                        className="text-[#00c896] dark:text-[#00ffcc] drop-shadow-[0_0_6px_rgba(0,200,150,0.35)]"
+                      />
                     </motion.div>
 
-                    <p className="text-sm sm:text-base italic leading-relaxed">“{quotes[current].quote}”</p>
+                    <p className="text-sm sm:text-base italic leading-relaxed">
+                      "{quotes[current].quote}"
+                    </p>
 
                     <p className="mt-4 text-sm font-semibold text-[#00c896] dark:text-[#00ffcc]">
                       {quotes[current].author}
@@ -221,7 +221,11 @@ const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
           </button>
 
           {/* Pagination dots */}
-          <div className="mt-8 flex gap-2 justify-center" role="tablist" aria-label="Quote pagination">
+          <div
+            className="mt-8 flex gap-2 justify-center"
+            role="tablist"
+            aria-label="Quote pagination"
+          >
             {quotes.map((_, idx) => (
               <button
                 key={idx}

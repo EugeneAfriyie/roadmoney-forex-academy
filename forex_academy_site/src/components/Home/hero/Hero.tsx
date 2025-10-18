@@ -1,9 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Globe from 'react-globe.gl';
 import { ArrowRight, BarChart3, Target, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ThemeContext } from '../../../context/ThemeContext';
-// import { ThemeContext } from '../context/ThemeProvider';
 
 const slides = [
   {
@@ -13,7 +12,7 @@ const slides = [
     button1: 'Join Mentorship',
     button2: 'Watch Live Trading Demo',
     icon: <BarChart3 size={26} className="text-[#00c896]" />,
-    background: 'image', // Static image
+    background: 'image',
     imageUrl: 'https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg',
   },
   {
@@ -23,7 +22,7 @@ const slides = [
     button1: 'View Course Outline',
     button2: 'Meet the Mentor',
     icon: <Target size={26} className="text-[#00c896]" />,
-    background: 'globe', // 3D globe
+    background: 'globe',
   },
   {
     id: 3,
@@ -32,13 +31,14 @@ const slides = [
     button1: 'Enroll Today',
     button2: 'Explore Benefits',
     icon: <ArrowRight size={26} className="text-[#00c896]" />,
-    background: 'gradient', // Gradient with motion glow
+    background: 'gradient',
   },
 ];
 
 const HeroCarousel: React.FC = () => {
   const { theme } = useContext(ThemeContext);
   const [current, setCurrent] = useState(0);
+  const globeRef = useRef<any>(null); // Ref for Globe component
 
   const bgClass =
     theme === 'dark'
@@ -55,6 +55,15 @@ const HeroCarousel: React.FC = () => {
     }, 6000);
     return () => clearInterval(interval);
   }, []);
+
+  // Configure globe controls
+  useEffect(() => {
+    if (slides[current].background === 'globe' && globeRef.current) {
+      const controls = globeRef.current.controls();
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+    }
+  }, [current]);
 
   const handlePrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   const handleNext = () => setCurrent((prev) => (prev + 1) % slides.length);
@@ -80,7 +89,7 @@ const HeroCarousel: React.FC = () => {
         {slides[current].background === 'image' && (
           <motion.div
             key="image-bg"
-            className={`absolute inset-0 bg-[url('${slides[current].imageUrl}')] bg-cover bg-center ${overlayClass} bg-black/90 `}
+            className={`absolute inset-0 bg-[url('${slides[current].imageUrl}')] bg-cover bg-center ${overlayClass} bg-black/90`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -97,17 +106,13 @@ const HeroCarousel: React.FC = () => {
             transition={{ duration: 0.8 }}
           >
             <Globe
+              ref={globeRef}
               globeImageUrl={globeImage}
               backgroundColor="rgba(0,0,0,0)"
               showAtmosphere={true}
               atmosphereColor="#00c896"
               width={window.innerWidth}
               height={window.innerHeight}
-              onGlobeReady={(globe: any) => {
-                const controls = globe.controls();
-                controls.autoRotate = true;
-                controls.autoRotateSpeed = 0.5;
-              }}
             />
           </motion.div>
         )}
@@ -140,12 +145,14 @@ const HeroCarousel: React.FC = () => {
                 <a
                   href={`/${slides[current].button1.toLowerCase().replace(' ', '-')}`}
                   className="bg-[#00c896] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#00a87a] hover:shadow-[0_0_15px_rgba(0,200,150,0.5)] transition-all duration-300"
+                  aria-label={slides[current].button1}
                 >
                   {slides[current].button1}
                 </a>
                 <a
                   href={`/${slides[current].button2.toLowerCase().replace(' ', '-')}`}
                   className="border border-[#00c896] text-[#00c896] px-8 py-3 rounded-xl font-semibold hover:bg-[#00c896]/10 hover:shadow-[0_0_15px_rgba(0,200,150,0.5)] transition-all duration-300"
+                  aria-label={slides[current].button2}
                 >
                   {slides[current].button2}
                 </a>

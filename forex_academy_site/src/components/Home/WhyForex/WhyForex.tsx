@@ -5,11 +5,16 @@ import { Clock, DollarSign, Globe } from 'lucide-react';
 import SectionHeader from '../QuoteCard/SectionHeader';
 import { ThemeContext } from '../../../context/ThemeContext';
 import AnimatedChartCanvas from './AnimatedChartCanvas';
-// import AnimatedChartCanvas from './Animations/AnimatedChartCanvas';
+
+interface Reason {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+}
 
 const WhyForex: React.FC = () => {
   const { theme } = useContext(ThemeContext);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotion() ?? false; // Fallback to false if null
   const { scrollYProgress } = useScroll();
   const translateY = useTransform(scrollYProgress, [0, 1], [0, -40]);
 
@@ -19,7 +24,7 @@ const WhyForex: React.FC = () => {
       : 'bg-gradient-to-b from-[#f8f9fb] via-[#eef1f6] to-[#f8f9fb]';
   const textClass = theme === 'dark' ? 'text-[#ffffffcc]' : 'text-[#0b0f0f]';
 
-  const reasons = [
+  const reasons: Reason[] = [
     {
       title: 'Flexible Work Schedule',
       description:
@@ -54,13 +59,13 @@ const WhyForex: React.FC = () => {
         <motion.div
           style={{ translateY }}
           className={`absolute inset-0 ${theme === 'dark' ? 'bg-black/10' : 'bg-white/6'} mix-blend-overlay`}
-          aria-hidden
+          aria-hidden="true"
         />
       </div>
 
       {/* Floating accent blob */}
       <motion.div
-        aria-hidden
+        aria-hidden="true"
         className="absolute bottom-[-18%] right-[-10%] w-[60vw] h-[60vw] rounded-full blur-[160px] opacity-18"
         animate={{
           x: ['0%', '-18%', '10%', '0%'],
@@ -150,7 +155,7 @@ const WhyForex: React.FC = () => {
                 >
                   <div
                     className="flex items-center justify-center w-10 h-10 rounded-lg"
-                    aria-hidden
+                    aria-hidden="true"
                     style={{
                       background: theme === 'dark' ? 'rgba(0,255,204,0.06)' : 'rgba(0,200,150,0.06)',
                     }}
@@ -182,7 +187,8 @@ const WhyForex: React.FC = () => {
                 className="text-sm italic text-gray-200 dark:text-gray-300 max-w-xl"
                 aria-hidden={prefersReducedMotion}
               >
-                <span className="text-[#00c896] font-semibold">At RoadMoney,</span> we don’t just teach Forex — we mentor you to master it.
+                <span className="text-[#00c896] font-semibold">At RoadMoney,</span> we don’t just teach
+                Forex — we mentor you to master it.
               </motion.p>
               {/* subtle type/wave underline that animates */}
               <motion.div
@@ -191,7 +197,7 @@ const WhyForex: React.FC = () => {
                 transition={{ duration: 0.9, delay: 0.4, ease: 'easeOut' }}
                 viewport={{ once: true }}
                 className="h-[2px] bg-gradient-to-r from-[#00c896] to-[#00ffcc] rounded mt-3 max-w-sm"
-                aria-hidden
+                aria-hidden="true"
               />
             </motion.div>
 
@@ -213,7 +219,7 @@ const WhyForex: React.FC = () => {
                 initial={{ x: 0 }}
                 whileHover={{ x: 6 }}
                 transition={{ duration: 0.35 }}
-                aria-hidden
+                aria-hidden="true"
               >
                 →
               </motion.span>

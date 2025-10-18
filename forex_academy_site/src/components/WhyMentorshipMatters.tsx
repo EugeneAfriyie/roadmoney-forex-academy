@@ -47,7 +47,7 @@ const FullScreenWhyMentorship: React.FC = () => {
 
       {/* Panels */}
       <div className="snap-y snap-mandatory h-screen overflow-y-scroll">
-        {panels.map((p, index) => (
+        {panels.map((p, _) => (
           <section
             key={p.id}
             className={`snap-start h-screen flex items-center justify-center px-4 xs:px-6 sm:px-8 lg:px-12`}
