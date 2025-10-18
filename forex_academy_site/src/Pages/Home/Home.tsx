@@ -16,6 +16,8 @@ import Services from '../../components/Home/Services/Services';
 const Home: React.FC = () => {
   return (
     <div>
+      {/* const globeImage = theme === 'dark' ? '/assets/globe/dark.png' : '/assets/globe/light.png'; */}
+
       <Hero />
       <Services />
       <AboutMentor />

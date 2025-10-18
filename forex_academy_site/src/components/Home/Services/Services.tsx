@@ -54,19 +54,20 @@ const services: Service[] = [
 
 const ImageBlock: React.FC<{ src: string; alt: string; keyId: string }> = ({ src, alt, keyId }) => {
   return (
-    <AnimatePresence mode="wait">
-      <motion.img
-        key={keyId}
-        src={src}
-        alt={alt}
-        initial={{ opacity: 0, filter: "blur(8px) scale(1.03)" }}
-        animate={{ opacity: 1, filter: "blur(0px) scale(1)" }}
-        exit={{ opacity: 0, filter: "blur(8px) scale(1.03)" }}
-        transition={{ duration: 0.7, ease: "easeInOut" }}
-        className="w-full h-64 md:h-[420px] object-cover rounded-2xl"
-        loading="lazy"
-      />
-    </AnimatePresence>
+
+<AnimatePresence mode="wait">
+  <motion.img
+    key={keyId}
+    src={src}
+    alt={alt}
+    initial={{ opacity: 0, filter: "blur(8px)", transform: "scale(1.03)" }}
+    animate={{ opacity: 1, filter: "blur(0px)", transform: "scale(1)" }}
+    exit={{ opacity: 0, filter: "blur(8px)", transform: "scale(1.03)" }}
+    transition={{ duration: 0.7, ease: "easeInOut" }}
+    className="w-full h-64 md:h-[420px] object-cover rounded-2xl"
+    loading="lazy"
+  />
+</AnimatePresence>
   );
 };
 

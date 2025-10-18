@@ -50,21 +50,24 @@ const Header: React.FC = () => {
           <ul className={`flex space-x-6 items-center ${textClass}`}>
             {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
               <li key={link}>
-                <a
+                <motion.a
                   href={`/${link.toLowerCase()}`}
                   className="hover:text-[#00c896] transition-colors relative group"
+                  whileHover={{ scale: 1.05 }} // Replace Tailwind scale-105
+                  transition={{ duration: 0.2 }}
                 >
                   {link}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00c896] group-hover:w-full transition-all" />
-                </a>
+                </motion.a>
               </li>
             ))}
           </ul>
           <motion.a
             href="/mentorship"
-            className="px-4 py-2 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
+            className="px-4 py-2 bg-[#00c896] text-white rounded-2xl"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            whileHover={{ scale: 1.05 }} // Replace Tailwind scale-105
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             Join Now
@@ -88,23 +91,27 @@ const Header: React.FC = () => {
         <ul className={`flex flex-col items-center py-4 space-y-4 ${textClass}`}>
           {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
             <li key={link}>
-              <a
+              <motion.a
                 href={`/${link.toLowerCase()}`}
                 className="hover:text-[#00c896] transition-colors"
+                whileHover={{ scale: 1.05 }} // Replace Tailwind scale-105
+                transition={{ duration: 0.2 }}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link}
-              </a>
+              </motion.a>
             </li>
           ))}
           <li>
-            <a
+            <motion.a
               href="/mentorship"
-              className="px-4 py-2 bg-[#00c896] text-white rounded-2xl hover:scale-105 transition-transform"
+              className="px-4 py-2 bg-[#00c896] text-white rounded-2xl"
+              whileHover={{ scale: 1.05 }} // Replace Tailwind scale-105
+              transition={{ duration: 0.2 }}
               onClick={() => setIsMenuOpen(false)}
             >
               Join Now
-            </a>
+            </motion.a>
           </li>
           <li>
             <button

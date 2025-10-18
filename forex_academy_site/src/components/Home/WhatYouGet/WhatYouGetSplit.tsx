@@ -131,18 +131,18 @@ const WhatYouGetSplit: React.FC = () => {
         
         {/* --- Left: Crossfade + Blur Image --- */}
         <div className="relative w-full h-[420px] md:h-[520px] rounded-2xl overflow-hidden border border-white/6">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={mentorshipType}
-              src={currentDetails.image}
-              alt={`${currentDetails.title} preview`}
-              initial={{ opacity: 0, filter: "blur(10px) scale(1.05)" }}
-              animate={{ opacity: 1, filter: "blur(0px) scale(1)" }}
-              exit={{ opacity: 0, filter: "blur(10px) scale(1.05)" }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </AnimatePresence>
+  <AnimatePresence mode="wait">
+    <motion.img
+      key={mentorshipType}
+      src={currentDetails.image}
+      alt={`${currentDetails.title} preview`}
+      initial={{ opacity: 0, filter: "blur(10px)", transform: "scale(1.05)" }}
+      animate={{ opacity: 1, filter: "blur(0px)", transform: "scale(1)" }}
+      exit={{ opacity: 0, filter: "blur(10px)", transform: "scale(1.05)" }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      className="absolute inset-0 w-full h-full object-cover"
+    />
+  </AnimatePresence>
 
           {/* Overlay UI */}
           <div className="absolute inset-6 rounded-xl p-4 z-10 flex flex-col justify-between pointer-events-none bg-black/20">

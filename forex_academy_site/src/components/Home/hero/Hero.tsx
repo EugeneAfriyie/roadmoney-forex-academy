@@ -46,8 +46,7 @@ const HeroCarousel: React.FC = () => {
       : 'bg-gradient-to-b from-[#f8f9fb] via-[#e0e2e7] to-[#f8f9fb]';
   const textClass = theme === 'dark' ? 'text-[#ffffffcc]' : 'text-[#1a1a1a]';
   const overlayClass = theme === 'dark' ? 'bg-black/50' : 'bg-white/50';
-  const globeImage = theme === 'dark' ? 'https://unpkg.com/three-globe@2.44.1/example/img/earth-dark.jpg' : 'https://unpkg.com/three-globe@2.44.1/example/img/earth-blue-marble.jpg';
-
+const globeImage = theme === 'dark' ? '/assets/globe/dark.png' : '/assets/globe/light.png';
   // Auto slide
   useEffect(() => {
     const interval = setInterval(() => {
