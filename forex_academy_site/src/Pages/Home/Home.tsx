@@ -12,6 +12,7 @@ import WhyMentorshipMatters from '../../components/WhyMentorshipMatters';
 // import WhatYouGet from '../../components/Test/WhatYouGet';
 import WhatYouGetSplit from '../../components/Home/WhatYouGet/WhatYouGetSplit';
 import Services from '../../components/Home/Services/Services';
+import JoinCommunity from '../../components/JoinCommunity';
 
 const Home: React.FC = () => {
   return (
@@ -29,6 +30,8 @@ const Home: React.FC = () => {
        {/* <ContinuousWhyMentorship /> */}
        {/* <FullScreenWhyMentorship /> */}
        <WhatYouGetSplit />
+
+       <JoinCommunity />
        {/* <WhatYouGet /> */}
     </div>                                   
   );

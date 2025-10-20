@@ -7,7 +7,7 @@ import Tilt from 'react-parallax-tilt';
 import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import { ThemeContext } from '../../../context/ThemeContext';
-import ThreeDBackground from '../../3DBackground';
+// import ThreeDBackground from '../../3DBackground';
 
 interface QuoteItem {
   quote: string;
@@ -121,7 +121,7 @@ const Quotes: React.FC<QuotesProps> = ({ onActiveChange }) => {
       aria-roledescription="carousel"
     >
       {/* Decorative interactive 3D background component */}
-      <ThreeDBackground activeIndex={current} />
+      {/* <ThreeDBackground activeIndex={current} /> */}
 
       {/* Floating accent blob (theme-aware) */}
       <motion.div
