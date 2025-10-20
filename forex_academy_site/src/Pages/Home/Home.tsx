@@ -12,10 +12,10 @@ import WhyMentorshipMatters from '../../components/WhyMentorshipMatters';
 // import WhatYouGet from '../../components/Test/WhatYouGet';
 import WhatYouGetSplit from '../../components/Home/WhatYouGet/WhatYouGetSplit';
 import Services from '../../components/Home/Services/Services';
-import JoinCommunity from '../../components/Home/JoinCommunity/JoinCommunity';
-import JoinCommunityAnimated from '../../components/Home/JoinCommunity/JoinCommunityAnimated';
+// import JoinCommunity from '../../components/Home/JoinCommunity/JoinCommunity';
+// import JoinCommunityAnimated from '../../components/Home/JoinCommunity/JoinCommunityAnimated';
 import JoinCommunity3D from '../../components/Home/JoinCommunity/JoinCommunity3D';
-import JoinCommunitySwitcher from '../../components/Home/JoinCommunity/JoinCommunitySwitcher';
+// import JoinCommunitySwitcher from '../../components/Home/JoinCommunity/JoinCommunitySwitcher';
 
 const Home: React.FC = () => {
   return (
@@ -34,11 +34,11 @@ const Home: React.FC = () => {
        {/* <FullScreenWhyMentorship /> */}
        <WhatYouGetSplit />
 
-       <JoinCommunity />
-       <JoinCommunityAnimated />
+       {/* <JoinCommunity /> */}
+       {/* <JoinCommunityAnimated /> */}
        <JoinCommunity3D />
 
-       <JoinCommunitySwitcher />
+       {/* <JoinCommunitySwitcher /> */}
        {/* <WhatYouGet /> */}
     </div>                                   
   );

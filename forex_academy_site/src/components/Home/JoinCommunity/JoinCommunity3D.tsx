@@ -3,71 +3,87 @@ import React, { Suspense, useContext, useRef, useState, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Text } from "@react-three/drei";
 import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import CommunityModal from "./CommunityModal";
 import { ThemeContext } from "../../../context/ThemeContext";
 import { Instagram, Facebook, Twitter, Send } from "lucide-react";
 
-function SimpleGlobe({ theme }: { theme: "dark" | "light" }) {
+function SimpleGlobe() {
   const ref = useRef<any>();
-  const pulse = useRef(0);
-
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (ref.current) ref.current.rotation.y += delta * 0.08;
-    pulse.current = Math.sin(state.clock.elapsedTime * 2) * 0.1 + 0.9;
   });
-
-  const baseColor = theme === "dark" ? "#07070a" : "#e8f9ff";
-  const glowColor = theme === "dark" ? "#ffb347" : "#ff9500";
 
   return (
     <group>
+      {/* Core sphere */}
       <mesh ref={ref}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshStandardMaterial
-          color={baseColor}
-          metalness={0.4}
-          roughness={0.4}
-          emissive={glowColor}
-          emissiveIntensity={0.1}
+          color="#0b0f19"
+          metalness={0.2}
+          roughness={0.6}
+          emissive="#00ffcc"
+          emissiveIntensity={0.15}
         />
       </mesh>
 
+      {/* Glow layer */}
       <mesh scale={[1.03, 1.03, 1.03]}>
         <sphereGeometry args={[1.03, 64, 64]} />
         <meshStandardMaterial
-          color={glowColor}
+          color="#00ffcc"
           transparent
           opacity={0.05}
-          emissive={glowColor}
-          emissiveIntensity={pulse.current}
+          emissive="#00ffcc"
+          emissiveIntensity={0.3}
         />
       </mesh>
+
+      <OrbitingText />
     </group>
   );
 }
 
-function FloatingText() {
-  const textRef = useRef<any>();
+// Floating orbiting text pieces
+function OrbitingText() {
+  const ref = useRef<any>();
+  const words = ["R", "O", 'A','D', 'T','O','M','O','N','E','Y','A','C','A','D','E','M','Y'];
+  const radius = 2.3;
+
   useFrame((state) => {
-    if (textRef.current)
-      textRef.current.rotation.y = state.clock.elapsedTime * 0.5;
+    const t = state.clock.getElapsedTime() * 0.1;
+    if (ref.current) ref.current.rotation.y = t;
   });
+
   return (
-    <Text
-      ref={textRef}
-      fontSize={0.25}
-      color="#ffb347"
-      position={[0, 0, 1.6]}
-      rotation={[0, 0, 0]}
-    >
-      RoadToMoney Academy
-    </Text>
+    <group ref={ref}>
+      {words.map((word, i) => {
+        const angle = (i / words.length) * Math.PI * 2;
+        return (
+          <Text
+            key={i}
+            position={[Math.cos(angle) * radius, 0, Math.sin(angle) * radius]}
+            rotation={[0, -angle, 0]}
+            fontSize={0.25}
+            color="#00ffcc"
+            anchorX="center"
+            anchorY="middle"
+          >
+            {word}
+          </Text>
+        );
+      })}
+    </group>
   );
 }
 
 export default function JoinCommunity3D() {
   const { theme } = useContext(ThemeContext);
   const [open, setOpen] = useState(false);
+  const { ref, inView } = useInView({ threshold: 0.3, triggerOnce: false });
+
+  if (theme !== "dark") return null;
 
   const links = useMemo(
     () => [
@@ -81,32 +97,32 @@ export default function JoinCommunity3D() {
 
   return (
     <section
-      className={`relative py-24 transition-colors duration-700 ${
-        theme === "dark"
-          ? "bg-[#050507] text-slate-100"
-          : "bg-[#f9fafb] text-gray-800"
-      }`}
+      ref={ref}
+      className="relative py-20 overflow-hidden bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-[#ffffffcc] font-montserrat"
+      id="community"
     >
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="rounded-3xl p-8 bg-gradient-to-br from-[#07070a] to-transparent border border-[#ffb347]/10 shadow-2xl">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+        <div className="rounded-3xl border border-[#00ffcc]/20 p-8 shadow-[0_0_40px_-10px_#00ffcc40]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            {/* Left Text Section */}
+            {/* Left Text */}
             <div>
               <motion.h2
-                initial={{ y: 8, opacity: 0 }}
+                initial={{ y: 10, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
-                className="text-3xl font-bold text-[#ffb347]"
+                className="text-3xl sm:text-4xl font-bold text-[#00ffcc]"
               >
                 Join Our Community
               </motion.h2>
+
               <motion.p
-                initial={{ y: 8, opacity: 0 }}
+                initial={{ y: 10, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.08 }}
-                className="mt-3 text-slate-300"
+                transition={{ delay: 0.1 }}
+                className="mt-4 text-[#ffffffcc]"
               >
-                Connect with traders worldwide. Share strategies, learn, and grow together.
+                Connect with thousands of traders worldwide. Share insights, learn proven strategies,
+                and grow within a supportive network.
               </motion.p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -116,9 +132,9 @@ export default function JoinCommunity3D() {
                     href={l.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-black/20 border border-white/6 text-white/90 hover:text-[#ffb347] transition"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#121826] border border-[#00ffcc40] text-[#ffffffcc] hover:bg-[#00ffcc20] transition-all"
                   >
-                    <span className="w-6 h-6 flex items-center justify-center text-[#ffb347]">
+                    <span className="w-6 h-6 flex items-center justify-center text-[#00ffcc]">
                       {l.icon}
                     </span>
                     <span className="text-sm">{l.name}</span>
@@ -126,28 +142,27 @@ export default function JoinCommunity3D() {
                 ))}
               </div>
 
-              <div className="mt-6">
-                <button
-                  onClick={() => setOpen(true)}
-                  className="px-5 py-3 rounded-full bg-[#ffb347] text-black font-semibold hover:scale-105 transition-transform"
-                >
-                  Join Community
-                </button>
-              </div>
+              <button
+                onClick={() => setOpen(true)}
+                className="mt-6 px-6 py-3 rounded-full bg-[#00ffcc] text-[#0b0f19] font-semibold hover:bg-[#00e6b3] transition-colors"
+              >
+                Join Community
+              </button>
             </div>
 
-            {/* 3D Globe */}
-            <div className="relative w-full h-80 rounded-xl overflow-hidden bg-black/30 border border-[#ffb347]/10">
-              <Canvas camera={{ position: [0, 0, 3.2] }}>
-                <ambientLight intensity={0.8} />
-                <directionalLight position={[5, 5, 5]} intensity={0.8} />
-                <Suspense fallback={null}>
-                  <SimpleGlobe theme={theme as "dark" | "light"} />
-                  <FloatingText />
-                  <Stars radius={40} depth={50} count={250} factor={3} fade />
-                </Suspense>
-                <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-              </Canvas>
+            {/* Right Globe */}
+            <div className="relative w-full h-[350px] sm:h-[420px] rounded-2xl overflow-hidden bg-[#0b0f19]/60">
+              {inView && (
+                <Canvas camera={{ position: [0, 0, 3.2] }}>
+                  <ambientLight intensity={0.6} />
+                  <directionalLight position={[4, 4, 4]} intensity={1} />
+                  <Suspense fallback={null}>
+                    <SimpleGlobe />
+                    <Stars radius={40} depth={60} count={300} factor={4} fade />
+                  </Suspense>
+                  <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+                </Canvas>
+              )}
             </div>
           </div>
         </div>
