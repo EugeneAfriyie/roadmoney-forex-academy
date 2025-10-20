@@ -12,7 +12,8 @@ import WhyMentorshipMatters from '../../components/WhyMentorshipMatters';
 // import WhatYouGet from '../../components/Test/WhatYouGet';
 import WhatYouGetSplit from '../../components/Home/WhatYouGet/WhatYouGetSplit';
 import Services from '../../components/Home/Services/Services';
-import JoinCommunity from '../../components/JoinCommunity';
+import JoinCommunity from '../../components/Home/JoinCommunity/JoinCommunity';
+import JoinCommunityAnimated from '../../components/Home/JoinCommunity/JoinCommunityAnimated';
 
 const Home: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const Home: React.FC = () => {
        <WhatYouGetSplit />
 
        <JoinCommunity />
+       <JoinCommunityAnimated />
        {/* <WhatYouGet /> */}
     </div>                                   
   );

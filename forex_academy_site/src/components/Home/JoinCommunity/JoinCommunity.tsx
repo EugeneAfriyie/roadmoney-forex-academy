@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 // import { ThemeContext } from '../../../context/ThemeContext';
 import { Instagram, Facebook, Twitter, Send, Globe } from 'lucide-react';
-import { ThemeContext } from '../context/ThemeContext';
+import { ThemeContext } from '../../../context/ThemeContext';
 
 const JoinCommunity: React.FC = () => {
   const { theme } = useContext(ThemeContext);
