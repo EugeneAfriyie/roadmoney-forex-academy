@@ -8,12 +8,12 @@ export default function AcademyPopupAd() {
   const [showContacts, setShowContacts] = useState(false);
 
   useEffect(() => {
-    const shownBefore = sessionStorage.getItem("academyAdShown");
+    const shownBefore = sessionStorage.getItem("academyAdShowuuuuuuuun");
     if (!shownBefore) {
       const timer = setTimeout(() => {
         setShow(true);
-        sessionStorage.setItem("academyAdShown", "true");
-      }, 60000); // 1 minute
+        sessionStorage.setItem("academyAdShownhjjj", "true");
+      }, 600); // 1 minute
       return () => clearTimeout(timer);
     }
   }, []);
