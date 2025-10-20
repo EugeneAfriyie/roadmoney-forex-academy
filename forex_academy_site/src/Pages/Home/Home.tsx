@@ -16,6 +16,7 @@ import Services from '../../components/Home/Services/Services';
 // import JoinCommunityAnimated from '../../components/Home/JoinCommunity/JoinCommunityAnimated';
 import JoinCommunity3D from '../../components/Home/JoinCommunity/JoinCommunity3D';
 import TradingAcademyAd from '../../components/Home/TradingAcademyAd/TradingAcademyAd';
+import AcademyPopupAd from '../../components/Home/TradingAcademyAd/AcademyPopupAd';
 // import JoinCommunitySwitcher from '../../components/Home/JoinCommunity/JoinCommunitySwitcher';
 
 const Home: React.FC = () => {
@@ -43,6 +44,7 @@ const Home: React.FC = () => {
        {/* <WhatYouGet /> */}
 
        <TradingAcademyAd />
+       <AcademyPopupAd />
     </div>                                   
   );
 };
