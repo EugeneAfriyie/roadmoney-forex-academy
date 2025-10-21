@@ -18,6 +18,8 @@ import JoinCommunity3D from '../../components/Home/JoinCommunity/JoinCommunity3D
 import TradingAcademyAd from '../../components/Home/TradingAcademyAd/TradingAcademyAd';
 import AcademyPopupAd from '../../components/Home/TradingAcademyAd/AcademyPopupAd';
 import ContactInvite from '../../components/Home/ContactInvite/ContactInvite';
+import FreeValueHook from '../../components/Home/TradingAcademyAd/FreeValueHook/FreeValueHook';
+import SmartTradingQuiz from '../../components/Home/TradingAcademyAd/FreeValueHook/SmartTradingQuiz';
 // import JoinCommunitySwitcher from '../../components/Home/JoinCommunity/JoinCommunitySwitcher';
 
 const Home: React.FC = () => {
@@ -47,6 +49,8 @@ const Home: React.FC = () => {
        <TradingAcademyAd />
        <AcademyPopupAd />
        <ContactInvite />
+       <FreeValueHook />
+       <SmartTradingQuiz />
     </div>                                   
   );
 };
