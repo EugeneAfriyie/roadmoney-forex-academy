@@ -1,6 +1,6 @@
 // Eugene Afriyie UEB3502023
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { X, MapPin, Phone, Instagram, Send } from "lucide-react";
 
 export default function AcademyPopupAd() {
@@ -18,13 +18,13 @@ export default function AcademyPopupAd() {
     }
   }, []);
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     hidden: { opacity: 0, y: 20, scale: 0.8 },
-    visible: (i: number) => ({
+    visible: (custom: number) => ({
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { delay: i * 0.1, type: "spring", stiffness: 300 },
+      transition: { delay: custom * 0.1, type: "spring", stiffness: 300 },
     }),
     exit: { opacity: 0, y: 20, scale: 0.8, transition: { duration: 0.2 } },
   };

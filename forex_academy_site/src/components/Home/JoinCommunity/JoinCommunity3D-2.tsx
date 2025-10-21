@@ -1,5 +1,5 @@
 // Eugene Afriyie UEB3502023
-import React, { Suspense, useContext, useRef, useState, useMemo } from "react";
+import  { Suspense, useContext, useRef, useState, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, Text } from "@react-three/drei";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import { ThemeContext } from "../../../context/ThemeContext";
 import { Instagram, Facebook, Twitter, Send } from "lucide-react";
 
 function SimpleGlobe() {
-  const ref = useRef<any>();
+  const ref = useRef<any>(null);
   useFrame((_, delta) => {
     if (ref.current) ref.current.rotation.y += delta * 0.08;
   });
@@ -47,7 +47,7 @@ function SimpleGlobe() {
 
 // Floating text around the globe
 function OrbitingText() {
-  const ref = useRef<any>();
+  const ref = useRef<any>(null);
   useFrame((state) => {
     const t = state.clock.getElapsedTime() * 0.4;
     ref.current.position.x = Math.sin(t) * 2.3;
