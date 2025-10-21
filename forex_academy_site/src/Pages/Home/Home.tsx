@@ -20,6 +20,7 @@ import AcademyPopupAd from '../../components/Home/TradingAcademyAd/AcademyPopupA
 import ContactInvite from '../../components/Home/ContactInvite/ContactInvite';
 import FreeValueHook from '../../components/Home/TradingAcademyAd/FreeValueHook/FreeValueHook';
 import SmartTradingQuiz from '../../components/Home/TradingAcademyAd/FreeValueHook/SmartTradingQuiz';
+import FAQSection from '../../components/Home/FAQSection/FAQSection';
 // import JoinCommunitySwitcher from '../../components/Home/JoinCommunity/JoinCommunitySwitcher';
 
 const Home: React.FC = () => {
@@ -51,6 +52,7 @@ const Home: React.FC = () => {
        <ContactInvite />
        <FreeValueHook />
        <SmartTradingQuiz />
+       <FAQSection />
     </div>                                   
   );
 };

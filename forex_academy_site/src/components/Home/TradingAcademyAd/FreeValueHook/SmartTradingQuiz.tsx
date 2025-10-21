@@ -237,44 +237,67 @@ const QuizPanel = ({
 // ------------------------------------------------------
 // Subcomponent: ResultPanel
 // ------------------------------------------------------
+
+
 const ResultPanel = ({
   result,
   onRetake,
 }: {
   result: { title: string; description: string };
   onRetake: () => void;
-}) => (
-  <motion.div
-    key="result"
-    initial={{ opacity: 0, scale: 0.98 }}
-    animate={{ opacity: 1, scale: 1 }}
-    exit={{ opacity: 0, scale: 0.98 }}
-    transition={{ duration: 0.45 }}
-    className="bg-[#121826]/70 border border-[#00ffcc44] rounded-3xl p-6 shadow-[0_0_20px_#00ffcc30]"
-  >
-    <div className="flex flex-col items-center gap-3 text-center">
-      <CheckCircle2 className="w-12 h-12 text-[#00ffcc]" />
-      <h3 className="text-2xl font-semibold text-[#00ffcc]">{result.title}</h3>
-      <p className="text-[#ffffffcc] max-w-xl leading-relaxed">{result.description}</p>
+}) => {
+  // ✅ define the scroll handler here (not inside JSX)
+  const scrollToFAQ = () => {
+    const el = document.getElementById("faq");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
-      <div className="mt-5 flex flex-col sm:flex-row gap-3">
+  return (
+    <motion.div
+      key="result"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.45 }}
+      className="bg-[#121826]/70 border border-[#00ffcc44] rounded-3xl p-6 shadow-[0_0_20px_#00ffcc30]"
+    >
+      {/* result text */}
+      <div className="text-center mb-6">
+        <h3 className="text-2xl font-bold text-[#00ffcc] mb-2">{result.title}</h3>
+        <p className="text-[#ffffffcc] max-w-xl mx-auto">{result.description}</p>
+      </div>
+
+      {/* action buttons */}
+      <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
         <a
           href="/mentorship"
-          className="inline-flex items-center gap-2 bg-[#00ffcc] text-[#0b0f19] px-5 py-3 rounded-full font-semibold"
+          className="inline-flex items-center gap-2 bg-[#00ffcc] text-[#0b0f19] px-5 py-3 rounded-full font-semibold shadow-md hover:shadow-[0_0_10px_#00ffcc80] transition"
         >
           Get Started
           <ArrowRight className="w-4 h-4" />
         </a>
+
         <button
           onClick={onRetake}
-          className="inline-flex items-center gap-2 border border-[#ffffff10] text-[#ffffffcc] px-4 py-3 rounded-full"
+          className="inline-flex items-center gap-2 border border-[#ffffff10] text-[#ffffffcc] px-4 py-3 rounded-full hover:bg-[#ffffff05] transition"
         >
           Retake Quiz
         </button>
+
+        <button
+          onClick={scrollToFAQ}
+          className="inline-flex items-center gap-2 border border-[#00ffcc66] text-[#00ffcc] px-4 py-3 rounded-full hover:bg-[#00ffcc10] transition"
+        >
+          See FAQ
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
+
+
+
 
 // ------------------------------------------------------
 // Main Component

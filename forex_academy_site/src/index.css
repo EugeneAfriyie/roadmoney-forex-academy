@@ -20,3 +20,7 @@ body {
   animation: ticker 30s linear infinite;
   white-space: nowrap;
 }
+
+html {
+  scroll-behavior: smooth;
+}
