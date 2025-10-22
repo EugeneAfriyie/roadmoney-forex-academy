@@ -46,7 +46,7 @@ const services: Service[] = [
     title: "Webinars",
     subtitle: "Live training & Q&A",
     desc: "Weekly live webinars covering strategy, market structure, and trade psychology — recordings available on demand.",
-    image: "https://images.unsplash.com/photo-1563986768711-b3bde3dc821e?fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHRyYWRpbmd8ZW58MHx8MHx8fDA%3D&ixlib=rb-4.1.0&q=60&w=3000", // replace with your image
+    image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1760408725/IMG_20251014_022015_196_cmrmsg.jpg", // replace with your image
     icon: Video,
     price: "On-demand access",
   },
