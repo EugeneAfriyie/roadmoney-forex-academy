@@ -1,12 +1,13 @@
-"use client";
-
+// Eugene Afriyie UEB3502023
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Globe from "react-globe.gl";
-import { useSwipeable } from "react-swipeable";
+import { ArrowRight, BarChart3, Target } from "lucide-react";
 import { ThemeContext } from "../../../context/ThemeContext";
-import { BarChart3, Target, ArrowRight } from "lucide-react";
 
+// ------------------------------------------------------
+// Slide Data
+// ------------------------------------------------------
 const slides = [
   {
     id: 1,
@@ -41,56 +42,118 @@ const slides = [
   },
 ];
 
-const HeroCarousel: React.FC = () => {
+// ------------------------------------------------------
+// HeroCarousel Component
+// ------------------------------------------------------
+const  HeroCarousel: React.FC = () => {
   const { theme } = useContext(ThemeContext);
   const [current, setCurrent] = useState(0);
   const globeRef = useRef<any>(null);
+  const touchStartX = useRef<number | null>(null);
 
   const bgClass =
     theme === "dark"
       ? "bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19]"
       : "bg-gradient-to-b from-[#f8f9fb] via-[#e0e2e7] to-[#f8f9fb]";
-  const textClass = theme === "dark" ? "text-white" : "text-[#1a1a1a]";
-  const overlayColor = theme === "dark" ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.5)";
-  const globeImage = theme === "dark" ? "/assets/globe/dark.png" : "/assets/globe/light.png";
+  const textClass = theme === "dark" ? "text-[#ffffffcc]" : "text-[#1a1a1a]";
+  const overlayClass = theme === "dark" ? "bg-black/60" : "bg-white/60";
+  const globeImage =
+    theme === "dark" ? "/assets/globe/dark.png" : "/assets/globe/light.png";
 
-  // Auto slide
+  // Auto-slide every 7s
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, 7000);
     return () => clearInterval(interval);
   }, []);
 
-  // Configure globe controls
-  useEffect(() => {
-    if (slides[current].background === "globe" && globeRef.current) {
-      const controls = globeRef.current.controls();
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.5;
+  // Handle swipe (mobile)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = e.touches[0].clientX - touchStartX.current;
+    if (Math.abs(diff) > 80) {
+      if (diff > 0) handlePrev();
+      else handleNext();
+      touchStartX.current = null;
     }
+  };
+
+  const handlePrev = () =>
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  const handleNext = () => setCurrent((prev) => (prev + 1) % slides.length);
+
+  // Globe performance optimization
+// Globe performance optimization + cleanup
+useEffect(() => {
+  const globe = globeRef.current;
+  if (!globe) return;
+  const controls = globe.controls();
+
+  if (slides[current].background === "globe" && controls) {
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+  } else if (controls) {
+    controls.autoRotate = false;
+  }
+
+  // 🧹 Cleanup old WebGL context to prevent "Too many active WebGL contexts"
+  return () => {
+    try {
+      if (globe.renderer && typeof globe.renderer === "function") {
+        const renderer = globe.renderer();
+        if (renderer && renderer.dispose) renderer.dispose();
+      }
+    } catch (err) {
+      console.warn("Globe cleanup skipped:", err);
+    }
+  };
+}, [current]);
+
+
+  // Pause rendering when off-screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const isVisible = entries[0].isIntersecting;
+        const globe = globeRef.current;
+        if (!globe) return;
+        const controls = globe.controls();
+        if (controls)
+          controls.autoRotate = isVisible && slides[current].background === "globe";
+        const renderer = globe.renderer();
+        if (renderer && renderer.setAnimationLoop) {
+          renderer.setAnimationLoop(isVisible ? undefined : null);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const section = document.getElementById("hero");
+    if (section) observer.observe(section);
+    return () => observer.disconnect();
   }, [current]);
 
-  // Swipe handlers
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => setCurrent((prev) => (prev + 1) % slides.length),
-    onSwipedRight: () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length),
-    preventScrollOnSwipe: true,
-    trackMouse: true,
-  });
-
+  // ------------------------------------------------------
+  // JSX
+  // ------------------------------------------------------
   return (
     <section
       id="hero"
-      {...swipeHandlers}
-      className={`relative flex items-center justify-center h-screen overflow-hidden ${bgClass} font-montserrat select-none`}
+      aria-label="Hero Section"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      className={`relative flex items-center justify-center h-screen overflow-hidden ${bgClass} transition-colors duration-700 font-montserrat`}
     >
       {/* Backgrounds */}
       <AnimatePresence mode="wait">
         {slides[current].background === "gradient" && (
           <motion.div
             key="gradient-bg"
-            className="absolute inset-0 bg-gradient-to-r from-[#00c896]/20 via-transparent to-[#00c896]/20 blur-3xl"
+            className="absolute inset-0 bg-gradient-to-r from-[#00c896]/25 via-transparent to-[#00c896]/25 blur-3xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -101,27 +164,13 @@ const HeroCarousel: React.FC = () => {
         {slides[current].background === "image" && (
           <motion.div
             key="image-bg"
-            className="absolute inset-0"
+            className={`absolute inset-0 bg-cover bg-center ${overlayClass}`}
+            style={{ backgroundImage: `url(${slides[current].imageUrl})` }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-          >
-            <div
-              style={{
-                backgroundImage: `url(${slides[current].imageUrl})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-              className="absolute inset-0"
-            />
-            {/* overlay for contrast */}
-            <div
-              className="absolute inset-0"
-              style={{ backgroundColor: overlayColor }}
-            />
-          </motion.div>
+          />
         )}
 
         {slides[current].background === "globe" && (
@@ -132,12 +181,13 @@ const HeroCarousel: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
+            style={{ pointerEvents: "none" }}
           >
             <Globe
               ref={globeRef}
               globeImageUrl={globeImage}
               backgroundColor="rgba(0,0,0,0)"
-              showAtmosphere={true}
+              showAtmosphere
               atmosphereColor="#00c896"
               width={typeof window !== "undefined" ? window.innerWidth : 800}
               height={typeof window !== "undefined" ? window.innerHeight : 600}
@@ -151,12 +201,8 @@ const HeroCarousel: React.FC = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={slides[current].id}
-            initial={{
-              opacity: 0,
-              y: slides[current].id === 1 ? 0 : 30,
-              x: slides[current].id === 1 ? -60 : 0,
-            }}
-            animate={{ opacity: 1, y: 0, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
@@ -167,6 +213,7 @@ const HeroCarousel: React.FC = () => {
                   RoadMoney Forex Academy
                 </span>
               </div>
+
               <h1
                 className={`text-3xl sm:text-5xl md:text-6xl font-bold ${textClass} max-w-3xl mx-auto`}
               >
@@ -175,15 +222,20 @@ const HeroCarousel: React.FC = () => {
               <p className="text-lg md:text-xl opacity-80 max-w-2xl mx-auto">
                 {slides[current].subtitle}
               </p>
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href={`/${slides[current].button1.toLowerCase().replace(/\s+/g, "-")}`}
+                  href={`/${slides[current].button1
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
                   className="bg-[#00c896] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#00a87a] hover:shadow-[0_0_15px_rgba(0,200,150,0.5)] transition-all duration-300"
                 >
                   {slides[current].button1}
                 </a>
                 <a
-                  href={`/${slides[current].button2.toLowerCase().replace(/\s+/g, "-")}`}
+                  href={`/${slides[current].button2
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}`}
                   className="border border-[#00c896] text-[#00c896] px-8 py-3 rounded-xl font-semibold hover:bg-[#00c896]/10 hover:shadow-[0_0_15px_rgba(0,200,150,0.5)] transition-all duration-300"
                 >
                   {slides[current].button2}
@@ -195,7 +247,7 @@ const HeroCarousel: React.FC = () => {
       </div>
 
       {/* Pagination Dots */}
-      <div className="absolute bottom-8 flex gap-2 justify-center w-full z-20">
+      <div className="absolute bottom-8 flex gap-2 justify-center w-full">
         {slides.map((_, index) => (
           <button
             key={index}

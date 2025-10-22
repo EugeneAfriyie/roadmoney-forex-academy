@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import  { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, ChevronDown } from "lucide-react";
 
-export default function Footer(): JSX.Element {
+export default function Footer() {
   const year = new Date().getFullYear();
   const [showDisclaimer, setShowDisclaimer] = useState(false);
 

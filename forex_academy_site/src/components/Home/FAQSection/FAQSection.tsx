@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import  { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { ChevronDown, Mail } from "lucide-react";
 
@@ -32,7 +32,7 @@ const faqs: FAQItem[] = [
   },
 ];
 
-export default function FAQSection(): JSX.Element {
+export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });

@@ -23,7 +23,7 @@ export default function TradingAcademyAd() {
         >
           <div className="rounded-2xl overflow-hidden shadow-[0_0_40px_#00ffcc55] border border-[#00ffcc33]">
             <img
-              src="https://res.cloudinary.com/djeorsh5d/image/upload/v1751247112/PREG1_pqz5ik.jpg"
+              src="https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg"
               alt="RoadMoney Trading Academy Ghana"
               className="w-full h-[380px] md:h-[420px] object-cover hover:scale-105 transition-transform duration-700"
             />

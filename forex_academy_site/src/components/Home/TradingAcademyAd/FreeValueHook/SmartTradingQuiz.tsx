@@ -1,7 +1,14 @@
 // Eugene Afriyie UEB3502023
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
+
+
+interface Step {
+  key: string;
+  question: string;
+  options: string[];
+}
 
 // ------------------------------------------------------
 // Quiz Data
@@ -10,12 +17,7 @@ const steps = [
   {
     key: "experience",
     question: "How long have you been trading?",
-    options: [
-      "I’m new to trading",
-      "Less than 1 year",
-      "1–3 years",
-      "Over 3 years",
-    ],
+    options: ["I’m new to trading", "Less than 1 year", "1–3 years", "Over 3 years"],
   },
   {
     key: "schedule",
@@ -118,7 +120,7 @@ function useSmartQuiz() {
 }
 
 // ------------------------------------------------------
-// Subcomponent: IntroPanel
+// Intro Panel
 // ------------------------------------------------------
 const IntroPanel = ({ onStart }: { onStart: () => void }) => {
   const statTiles = [
@@ -138,8 +140,8 @@ const IntroPanel = ({ onStart }: { onStart: () => void }) => {
     >
       <h3 className="text-xl font-semibold text-[#00ffcc] mb-3">Quick intro</h3>
       <p className="text-[#ffffffcc] mb-4">
-        This quick quiz helps us match you with the right RoadMoney program.
-        Tap any stat below or press <strong>Start Quiz</strong> — it’s fast, private, and tailored.
+        This quick quiz helps us match you with the right RoadMoney program. Tap any stat below or press{" "}
+        <strong>Start Quiz</strong> — it’s fast, private, and tailored.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
@@ -171,19 +173,19 @@ const IntroPanel = ({ onStart }: { onStart: () => void }) => {
 };
 
 // ------------------------------------------------------
-// Subcomponent: QuizPanel
+// Quiz Panel
 // ------------------------------------------------------
-const QuizPanel = ({
-  stepIndex,
-  steps,
-  selectOption,
-  goBack,
-}: {
+interface QuizPanelProps {
   stepIndex: number;
-  steps: typeof steps;
+  steps: Step[];
   selectOption: (key: string, val: string) => void;
   goBack: () => void;
-}) => {
+}
+
+const QuizPanel: React.FC<QuizPanelProps> = ({ stepIndex, steps, selectOption, goBack }) => {
+  
+
+
   const progress = ((stepIndex + 1) / steps.length) * 100;
   const current = steps[stepIndex];
 
@@ -198,7 +200,9 @@ const QuizPanel = ({
     >
       <div className="mb-4">
         <div className="flex items-center justify-between text-xs text-[#ffffff99] mb-2">
-          <div>Question {stepIndex + 1} of {steps.length}</div>
+          <div>
+            Question {stepIndex + 1} of {steps.length}
+          </div>
           <div>{Math.round(progress)}%</div>
         </div>
         <div className="w-full bg-white/6 rounded-full h-2 overflow-hidden">
@@ -208,7 +212,7 @@ const QuizPanel = ({
 
       <h4 className="text-lg font-semibold text-[#00ffcc] mb-4">{current.question}</h4>
       <div className="grid gap-3">
-        {current.options.map((opt) => (
+        {current.options.map((opt: string) => (
           <motion.button
             key={opt}
             whileHover={{ scale: 1.02 }}
@@ -222,7 +226,9 @@ const QuizPanel = ({
       </div>
 
       <div className="mt-4 flex justify-between items-center">
-        <button onClick={goBack} className="text-sm text-[#ffffff99] underline">Back</button>
+        <button onClick={goBack} className="text-sm text-[#ffffff99] underline">
+          Back
+        </button>
         <div className="text-sm text-[#ffffff99]">
           Need help?{" "}
           <a href="mailto:groupeight00@gmail.com" className="text-[#00ffcc] underline">
@@ -235,10 +241,8 @@ const QuizPanel = ({
 };
 
 // ------------------------------------------------------
-// Subcomponent: ResultPanel
+// Result Panel
 // ------------------------------------------------------
-
-
 const ResultPanel = ({
   result,
   onRetake,
@@ -246,7 +250,6 @@ const ResultPanel = ({
   result: { title: string; description: string };
   onRetake: () => void;
 }) => {
-  // ✅ define the scroll handler here (not inside JSX)
   const scrollToFAQ = () => {
     const el = document.getElementById("faq");
     if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -261,13 +264,11 @@ const ResultPanel = ({
       transition={{ duration: 0.45 }}
       className="bg-[#121826]/70 border border-[#00ffcc44] rounded-3xl p-6 shadow-[0_0_20px_#00ffcc30]"
     >
-      {/* result text */}
       <div className="text-center mb-6">
         <h3 className="text-2xl font-bold text-[#00ffcc] mb-2">{result.title}</h3>
         <p className="text-[#ffffffcc] max-w-xl mx-auto">{result.description}</p>
       </div>
 
-      {/* action buttons */}
       <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
         <a
           href="/mentorship"
@@ -296,35 +297,21 @@ const ResultPanel = ({
   );
 };
 
-
-
-
 // ------------------------------------------------------
 // Main Component
 // ------------------------------------------------------
-export default function SmartTradingQuiz(): JSX.Element {
-  const {
-    started,
-    showResult,
-    stepIndex,
-    steps,
-    result,
-    startQuiz,
-    selectOption,
-    goBack,
-  } = useSmartQuiz();
+export default function SmartTradingQuiz() {
+  const { started, showResult, stepIndex, steps, result, startQuiz, selectOption, goBack } = useSmartQuiz();
 
   return (
     <section
       id="smart-quiz"
       className="relative bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white py-16 px-4 sm:px-8 md:px-16"
     >
-      {/* glow accents */}
       <div className="pointer-events-none absolute -top-32 left-8 w-72 h-72 rounded-full blur-3xl bg-[#00ffcc22]" />
       <div className="pointer-events-none absolute -bottom-32 right-8 w-72 h-72 rounded-full blur-3xl bg-[#00ffcc22]" />
 
       <div className="max-w-4xl mx-auto">
-        {/* heading */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-[#00ffcc12] px-3 py-1 rounded-full border border-[#00ffcc33] text-[#00ffcc] mb-4">
             <Sparkles className="w-4 h-4" />
@@ -336,36 +323,21 @@ export default function SmartTradingQuiz(): JSX.Element {
           </h2>
 
           <p className="text-[#ffffffb3] max-w-2xl mx-auto">
-            Answer a few quick questions — we’ll recommend the best mentorship package
-            (online or in-person) and the trading style that matches your lifestyle and capital.
+            Answer a few quick questions — we’ll recommend the best mentorship package (online or in-person) and the trading style that matches your lifestyle and capital.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-          {/* Left: quiz area */}
           <div className="md:col-span-7">
             <AnimatePresence mode="wait">
               {!started && <IntroPanel onStart={startQuiz} />}
               {started && !showResult && (
                 <QuizPanel stepIndex={stepIndex} steps={steps} selectOption={selectOption} goBack={goBack} />
               )}
-              {showResult && result && (
-                <ResultPanel result={result} onRetake={startQuiz} />
-              )}
-
-
-                <div className="mt-4 bg-[#121826]/40 border border-[#ffffff06] rounded-xl p-4 text-sm text-[#ffffffcc]">
-                <div className="font-semibold mb-2">Quick tips</div>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Be honest — the better the answers, the better the match.</li>
-                  <li>If you’re outside Accra, online mentorship is usually best unless you plan to relocate.</li>
-                  <li>Smaller capital = focus on risk management and position sizing.</li>
-                </ul>
-              </div>
+              {showResult && result && <ResultPanel result={result} onRetake={startQuiz} />}
             </AnimatePresence>
           </div>
 
-          {/* Right column tips */}
           <div className="md:col-span-5">
             <div className="sticky top-24">
               <div className="bg-[#0b1220]/50 border border-[#ffffff06] rounded-xl p-4 shadow-sm">

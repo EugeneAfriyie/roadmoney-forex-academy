@@ -49,7 +49,7 @@ const AboutMentor: React.FC = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-tr from-[#00c896]/10 via-transparent to-transparent" />
           <MentorImage
-            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&h=800&fit=crop"
+            src="https://res.cloudinary.com/djeorsh5d/image/upload/v1761140155/photo_2025-04-14_18-06-19_h2jdxx.jpg"
             alt="Mentor"
           />
         </motion.div>

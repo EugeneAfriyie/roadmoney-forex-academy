@@ -46,7 +46,7 @@ const WhatYouGetSplit: React.FC = () => {
         tagline: "Master trading from anywhere",
         highlight: "4+ Live Sessions",
         mode: "Virtual",
-        image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1751247112/PREG1_pqz5ik.jpg",
+        image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1761140161/photo_2025-06-15_14-13-39_yyrseb.jpg",
         badge: "Exclusive Program",
         features: [
           { title: "1-on-1 Video Calls", desc: "Personalized coaching via Zoom to refine your trading edge.", Icon: Users },
@@ -60,7 +60,7 @@ const WhatYouGetSplit: React.FC = () => {
         tagline: "Immersive trading experience",
         highlight: "2-Day Workshop",
         mode: "In-Person",
-        image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1751247112/PREG1_pqz5ik.jpg",
+        image: "https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg",
         badge: "Elite Training",
         features: [
           { title: "In-Person Coaching", desc: "Face-to-face mentorship to build your trading skills.", Icon: Users },
