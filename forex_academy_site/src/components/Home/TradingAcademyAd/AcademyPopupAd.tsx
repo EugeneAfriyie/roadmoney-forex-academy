@@ -56,7 +56,7 @@ export default function AcademyPopupAd() {
 
             {/* Image */}
             <motion.img
-              src="/images/trading-office.jpg"
+              src="https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg"
               alt="RoadMoney Forex Academy Ghana"
               className="w-full h-44 sm:h-52 object-cover rounded-2xl mb-4 border border-[#00ffcc33]"
               initial={{ opacity: 0 }}
