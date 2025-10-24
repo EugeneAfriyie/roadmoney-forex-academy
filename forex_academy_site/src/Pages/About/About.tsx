@@ -7,6 +7,7 @@ import AboutCTA from "../../components/About/AboutCTA";
 import AboutMentor from "../../components/Home/AboutMentor/AboutMentor";
 import MentorImpact from "../../components/About/MentorImpact";
 import { ThemeContext } from "../../context/ThemeContext";
+import MentorJourney from "../../components/About/MentorJourney";
 
 const About: React.FC = () => {
   const { theme } = useContext(ThemeContext);
@@ -24,8 +25,7 @@ const About: React.FC = () => {
       <AboutMentor />
       <MentorImpact />
       <AboutMission />
-      <MentorImpact />
-      <AboutJourney />
+      <MentorJourney />
       <AboutCTA />
     </main>
   );
