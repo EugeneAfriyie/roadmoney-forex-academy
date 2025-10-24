@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 // import { ThemeContext } from "../../context/ThemeContext";
 import AboutHero from "../../components/About/AboutHero";
-import AboutMission from "../../components/About/MissionVision";
 // import AboutJourney from "../../components/About/AboutJourney";
 import AboutCTA from "../../components/About/AboutCTA";
 import AboutMentor from "../../components/Home/AboutMentor/AboutMentor";
