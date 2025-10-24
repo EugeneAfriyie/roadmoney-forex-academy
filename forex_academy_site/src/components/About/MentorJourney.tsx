@@ -43,7 +43,7 @@ const MentorJourney: React.FC = () => {
             <img
               src="https://res.cloudinary.com/djeorsh5d/image/upload/v1761140164/photo_2025-08-20_09-20-25_pych9m.jpg"
               alt="Young man reflecting on challenges"
-              className="float-left w-44 h-44 object-cover rounded-xl mr-5 mb-4 shadow-md"
+              className="float-left w-28 h-24 sm:w-40 sm:h-40 object-cover rounded-xl mr-5 mb-4 shadow-md"
             />
             My story began during one of the hardest times of my life — a period
             marked by <span className="text-[#00c896] font-semibold">unemployment,
@@ -64,7 +64,7 @@ const MentorJourney: React.FC = () => {
             <img
               src="https://res.cloudinary.com/djeorsh5d/image/upload/v1761140163/photo_2025-08-04_08-20-22_hmjomv.jpg"
               alt="Trader studying charts"
-              className="float-right w-44 h-44 object-cover rounded-xl ml-5 mb-4 shadow-md"
+              className="float-right w-28 h-24 sm:w-40 sm:h-40 object-cover rounded-xl ml-5 mb-4 shadow-md"
             />
             I had no mentor then — just determination, free YouTube videos, and
             prayer. I remember staying up till 3 a.m., analyzing charts on a small
@@ -85,7 +85,7 @@ const MentorJourney: React.FC = () => {
             <img
               src="https://res.cloudinary.com/djeorsh5d/image/upload/v1761140152/photo_2024-09-22_22-20-55_uevwfm.jpg"
               alt="Mentor teaching session"
-              className="float-left w-48 h-44 object-cover rounded-xl mr-5 mb-4 shadow-md"
+              className="float-left w-28 h-24 sm:w-40 sm:h-40 object-cover rounded-xl mr-5 mb-4 shadow-md"
             />
             My turning point came when I realized that trading wasn’t just about
             making money — it was about mastering myself.  
@@ -106,7 +106,7 @@ const MentorJourney: React.FC = () => {
             <img
               src="https://res.cloudinary.com/djeorsh5d/image/upload/v1761140148/photo_2023-12-12_17-33-45_m1idsn.jpg"
               alt="Mentor speaking to youth"
-              className="float-right w-48 h-44 object-cover rounded-xl ml-5 mb-4 shadow-md"
+              className="float-right w-28 h-24 sm:w-40 sm:h-40 object-cover rounded-xl ml-5 mb-4 shadow-md"
             />
             Today, I mentor traders from around the world, teach structure-based
             trading, and host webinars focused on psychology and risk

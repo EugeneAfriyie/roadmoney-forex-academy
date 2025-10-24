@@ -1,13 +1,15 @@
 import React, { useContext } from "react";
 // import { ThemeContext } from "../../context/ThemeContext";
 import AboutHero from "../../components/About/AboutHero";
-import AboutMission from "../../components/About/AboutMission";
-import AboutJourney from "../../components/About/AboutJourney";
+import AboutMission from "../../components/About/MissionVision";
+// import AboutJourney from "../../components/About/AboutJourney";
 import AboutCTA from "../../components/About/AboutCTA";
 import AboutMentor from "../../components/Home/AboutMentor/AboutMentor";
 import MentorImpact from "../../components/About/MentorImpact";
 import { ThemeContext } from "../../context/ThemeContext";
 import MentorJourney from "../../components/About/MentorJourney";
+import MissionVision from "../../components/About/MissionVision";
+import TeamCommunity from "../../components/About/TeamCommunity";
 
 const About: React.FC = () => {
   const { theme } = useContext(ThemeContext);
@@ -24,8 +26,10 @@ const About: React.FC = () => {
       <AboutHero />
       <AboutMentor />
       <MentorImpact />
-      <AboutMission />
+      {/* <AboutMission /> */}
+      <MissionVision />
       <MentorJourney />
+      <TeamCommunity />
       <AboutCTA />
     </main>
   );
