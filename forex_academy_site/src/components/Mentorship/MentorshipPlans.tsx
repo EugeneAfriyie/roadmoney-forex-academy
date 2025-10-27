@@ -1,251 +1,218 @@
 // Eugene Afriyie UEB3502023
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle2 } from "lucide-react";
 
-const MentorshipPlans = () => {
-  const [activePlan, setActivePlan] = useState(null);
+export default function MentorshipPlans() {
+  const [activePlan, setActivePlan] = useState<"inPerson" | "online" | null>("inPerson");
   const [showModal, setShowModal] = useState(false);
 
-  const togglePlan = (plan) => {
-    setActivePlan(activePlan === plan ? null : plan);
+  const inPersonPackages = [
+    {
+      name: "Standard Mentorship",
+      price: "₵1,500",
+      level: "Beginner–Advanced",
+      benefits: [
+        "1 month intensive training",
+        "Access to mentorship group (For life)",
+        "Live trading sessions whiles learning",
+        "Weekly psychology sessions",
+        "Risk management session",
+        "Prop firm passing techniques",
+        "A Certificate of Participation",
+      ],
+    },
+    {
+      name: "Advanced Mentorship",
+      price: "₵2,500",
+      level: "Experienced Traders",
+      benefits: [
+        "1 month intensive training",
+        "Lifetime coaching",
+        "Access to mentorship group (For life)",
+        "Live and recorded sessions",
+        "Deep dive into my trading system",
+        "Weekly psychology sessions",
+        "Prop firm passing techniques",
+        "Advanced entry and exit criteria",
+        "Trading psychology mastery",
+        "Certificate of Excellence",
+      ],
+    },
+    {
+      name: "Premium Mentorship",
+      price: "₵4,000",
+      level: "Elite Personalized",
+      benefits: [
+        "1 month intensive personalized coaching",
+        "Lifetime access to 1-on-1 sessions",
+        "Priority access to mentorship group (For life)",
+        "Exclusive trading strategies & system deep dives",
+        "Weekly psychology + market outlook sessions",
+        "Private prop firm setup guide",
+        "Personal trading performance tracking",
+        "Certificate of Mastery",
+      ],
+      premium: true,
+    },
+  ];
+
+  const onlinePackages = [
+    {
+      name: "Standard Mentorship",
+      price: "₵1,000",
+      level: "Beginner–Advanced",
+      benefits: [
+        "1 month intensive online training",
+        "Lifetime access to private mentorship group",
+        "Weekly live trading sessions",
+        "Recorded classes for review",
+        "Risk management training",
+        "A Certificate of Participation",
+      ],
+    },
+    {
+      name: "Advanced Mentorship",
+      price: "₵2,000",
+      level: "Experienced Traders",
+      benefits: [
+        "1 month intensive advanced online mentorship",
+        "Lifetime coaching access",
+        "Deep dive into advanced trading systems",
+        "Weekly psychology and market review sessions",
+        "Prop firm strategies & risk management",
+        "A Certificate of Completion",
+      ],
+    },
+  ];
+
+  const planVariants = {
+    hidden: { opacity: 0, y: 25 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, staggerChildren: 0.1 } },
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-gray-800 text-white py-16 px-6">
+    <section className="relative py-20 px-6 md:px-16 bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat">
       <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-4 text-yellow-400">
-          Choose Your Mentorship Path
-        </h2>
-        <p className="text-gray-300 mb-10 text-lg">
-          Select between our <span className="text-yellow-400">In-Person</span> or{" "}
-          <span className="text-yellow-400">Online</span> mentorship programs,
-          designed to help you master trading at your own pace.
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[#00ffcc]">Choose Your Mentorship Path</h2>
+        <p className="text-[#ffffffcc] text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+          Whether you prefer hands-on training or the flexibility of online mentorship, we’ve got a package tailored just for you.
         </p>
 
+        <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent mx-auto mb-12" />
+
         {/* Toggle Buttons */}
-        <div className="flex justify-center gap-6 mb-12">
+        <div className="flex flex-wrap justify-center gap-4 mb-10">
           <button
-            onClick={() => togglePlan("inPerson")}
-            className={`px-6 py-3 rounded-full font-semibold transition-all ${
+            onClick={() => setActivePlan(activePlan === "inPerson" ? null : "inPerson")}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activePlan === "inPerson"
-                ? "bg-yellow-500 text-black"
-                : "bg-gray-700 hover:bg-gray-600"
+                ? "bg-[#00ffcc] text-[#0b0f19] shadow-[0_0_20px_#00ffcc80]"
+                : "border border-[#00ffcc80] text-[#00ffcc] hover:bg-[#00ffcc20]"
             }`}
           >
             In-Person Mentorship
           </button>
 
           <button
-            onClick={() => togglePlan("online")}
-            className={`px-6 py-3 rounded-full font-semibold transition-all ${
+            onClick={() => setActivePlan(activePlan === "online" ? null : "online")}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activePlan === "online"
-                ? "bg-yellow-500 text-black"
-                : "bg-gray-700 hover:bg-gray-600"
+                ? "bg-[#FFD700] text-[#0b0f19] shadow-[0_0_20px_#FFD70080]"
+                : "border border-[#FFD70080] text-[#FFD700] hover:bg-[#FFD70020]"
             }`}
           >
             Online Mentorship
           </button>
         </div>
 
-        {/* In-Person Packages */}
+        {/* Packages */}
         <AnimatePresence>
-          {activePlan === "inPerson" && (
+          {activePlan && (
             <motion.div
-              key="inPerson"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="grid md:grid-cols-3 gap-6"
+              variants={planVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
             >
-              {[
-                {
-                  title: "Standard Mentorship",
-                  price: "₵1,200",
-                  desc: "Perfect for beginners. Learn step-by-step with live sessions and guided practice.",
-                  features: [
-                    "4-week in-person training",
-                    "Weekly strategy sessions",
-                    "Basic technical analysis",
-                    "Certificate of Completion",
-                  ],
-                },
-                {
-                  title: "Advanced Mentorship",
-                  price: "₵2,500",
-                  desc: "For traders who already understand the basics and want to refine their edge.",
-                  features: [
-                    "6-week intensive training",
-                    "Personal strategy building",
-                    "Market psychology mastery",
-                    "Lifetime community access",
-                  ],
-                },
-                {
-                  title: "Premium Mentorship",
-                  price: "₵4,000",
-                  desc: "Full VIP experience — one-on-one coaching, premium tools & exclusive insights.",
-                  features: [
-                    "8-week mentorship program",
-                    "1-on-1 personalized coaching",
-                    "Private trading group access",
-                    "Exclusive premium signals",
-                  ],
-                },
-              ].map((pkg, i) => (
-                <motion.div
-                  key={i}
-                  className="bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:border-yellow-500 transition-all flex flex-col justify-between"
-                  whileHover={{ scale: 1.03 }}
+              {(activePlan === "inPerson" ? inPersonPackages : onlinePackages).map((pkg) => (
+                <motion.article
+                  key={pkg.name}
+                  className={`snap-start min-w-[85%] md:min-w-0 md:w-auto bg-[#121826]/80 border border-[#00ffcc40] rounded-2xl p-6 backdrop-blur-sm
+                  hover:scale-[1.03] transition-all duration-300 shadow-[0_0_25px_#00ffcc30]
+                  ${pkg.premium ? "md:scale-[1.05] border-[#FFD70080] shadow-[0_0_30px_#FFD70050]" : ""}`}
                 >
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3 text-yellow-400">
-                      {pkg.title}
-                    </h3>
-                    <p className="text-gray-300 mb-4">{pkg.desc}</p>
-                    <ul className="text-sm text-gray-400 mb-6 space-y-2 text-left">
-                      {pkg.features.map((f, idx) => (
-                        <li key={idx}>• {f}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-yellow-400 mb-4">
-                      {pkg.price}
-                    </p>
-                    <button
-                      onClick={() => setShowModal(true)}
-                      className="w-full bg-yellow-500 text-black py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Online Packages */}
-        <AnimatePresence>
-          {activePlan === "online" && (
-            <motion.div
-              key="online"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="grid md:grid-cols-2 gap-6"
-            >
-              {[
-                {
-                  title: "Standard Mentorship",
-                  price: "₵800",
-                  desc: "A complete journey from beginner to advanced trader, all online.",
-                  features: [
-                    "4-week virtual training",
-                    "Interactive live classes",
-                    "Trading journal templates",
-                    "Mentor Q&A support",
-                  ],
-                },
-                {
-                  title: "Advanced Mentorship",
-                  price: "₵1,800",
-                  desc: "Best for traders with experience who want to perfect their strategies.",
-                  features: [
-                    "6-week advanced online training",
-                    "Chart mastery sessions",
-                    "Risk & capital management",
-                    "Access to VIP Telegram group",
-                  ],
-                },
-              ].map((pkg, i) => (
-                <motion.div
-                  key={i}
-                  className="bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-700 hover:border-yellow-500 transition-all flex flex-col justify-between"
-                  whileHover={{ scale: 1.03 }}
-                >
-                  <div>
-                    <h3 className="text-xl font-semibold mb-3 text-yellow-400">
-                      {pkg.title}
-                    </h3>
-                    <p className="text-gray-300 mb-4">{pkg.desc}</p>
-                    <ul className="text-sm text-gray-400 mb-6 space-y-2 text-left">
-                      {pkg.features.map((f, idx) => (
-                        <li key={idx}>• {f}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-yellow-400 mb-4">
-                      {pkg.price}
-                    </p>
-                    <button
-                      onClick={() => setShowModal(true)}
-                      className="w-full bg-yellow-500 text-black py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
-                    >
-                      Register Now
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Registration Modal */}
-        <AnimatePresence>
-          {showModal && (
-            <motion.div
-              className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="bg-white text-black rounded-2xl p-8 max-w-md w-full relative"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.8 }}
-              >
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-                >
-                  ✕
-                </button>
-                <h3 className="text-2xl font-bold mb-4 text-center">
-                  Register for Mentorship
-                </h3>
-                <form className="flex flex-col gap-4">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    className="border rounded-lg p-3"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="border rounded-lg p-3"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    className="border rounded-lg p-3"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-yellow-500 text-black py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-all"
+                  <h3
+                    className={`text-2xl font-semibold mb-3 ${
+                      pkg.premium ? "text-[#FFD700]" : "text-[#00ffcc]"
+                    }`}
                   >
-                    Submit
+                    {pkg.name}
+                  </h3>
+                  <p className="text-[#ffffffb3] text-sm mb-2">{pkg.level}</p>
+                  <p className="text-3xl font-bold mb-4 text-[#FFD700]">{pkg.price}</p>
+
+                  <ul className="text-left text-[#ffffffcc] text-sm leading-relaxed mb-4 space-y-2">
+                    {pkg.benefits.map((benefit) => (
+                      <li key={benefit} className="flex items-start gap-2">
+                        <CheckCircle2
+                          className={`w-4 h-4 flex-shrink-0 mt-0.5 ${
+                            pkg.premium ? "text-[#FFD700]" : "text-[#00ffcc]"
+                          }`}
+                        />
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className={`w-full mt-4 py-3 rounded-xl font-semibold transition-all ${
+                      pkg.premium
+                        ? "bg-[#FFD700] text-[#0b0f19] hover:bg-[#e6c200]"
+                        : "bg-[#00ffcc] text-[#0b0f19] hover:bg-[#00e6b3]"
+                    }`}
+                  >
+                    Register Now
                   </button>
-                </form>
-              </motion.div>
+                </motion.article>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </div>
-  );
-};
 
-export default MentorshipPlans;
+      {/* Registration Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-[#121826] border border-[#00ffcc40] rounded-2xl p-8 w-[90%] max-w-md text-center"
+            >
+              <h4 className="text-2xl font-bold mb-4 text-[#00ffcc]">Registration Coming Soon</h4>
+              <p className="text-[#ffffffb3] mb-6">
+                Our mentorship enrollment system is being finalized. Stay tuned — registration opens soon!
+              </p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-6 py-3 bg-[#00ffcc] text-[#0b0f19] font-semibold rounded-full hover:bg-[#00e6b3] transition-all"
+              >
+                Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
