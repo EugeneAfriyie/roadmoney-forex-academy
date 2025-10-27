@@ -126,7 +126,7 @@ export default function MentorshipPlans() {
         <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent mx-auto mb-12" />
 
         {/* Toggle Buttons */}
-        <div className="flex flex-wrap justify-center gap-4 mb-10">
+        <div className="flex  justify-center gap-4 mb-10">
           <button
             onClick={() => setActivePlan(activePlan === PlanTypes.InPerson ? null : PlanTypes.InPerson)}
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
@@ -158,7 +158,7 @@ export default function MentorshipPlans() {
               initial="hidden"
               animate="show"
               exit="hidden"
-              className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
+              className="flex md:grid md:grid-cols-3 gap-6 md:overflow-hidden overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
             >
               {(activePlan === PlanTypes.InPerson ? inPersonPackages : onlinePackages).map((pkg) => (
                 <motion.article

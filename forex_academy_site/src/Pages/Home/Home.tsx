@@ -21,6 +21,7 @@ import ContactInvite from '../../components/Home/ContactInvite/ContactInvite';
 // import FreeValueHook from '../../components/Home/TradingAcademyAd/FreeValueHook/FreeValueHook';
 import SmartTradingQuiz from '../../components/Home/TradingAcademyAd/FreeValueHook/SmartTradingQuiz';
 import FAQSection from '../../components/Home/FAQSection/FAQSection';
+import Testimonials from '../../components/Testimonials';
 // import JoinCommunitySwitcher from '../../components/Home/JoinCommunity/JoinCommunitySwitcher';
 
 const Home: React.FC = () => {
@@ -34,7 +35,6 @@ const Home: React.FC = () => {
       <WhatIsForex />
       <Quotes />
        <WhyForex />
-       {/* <Testimonials /> */}
        <WhyMentorshipMatters />
        {/* <ContinuousWhyMentorship /> */}
        {/* <FullScreenWhyMentorship /> */}
@@ -53,6 +53,8 @@ const Home: React.FC = () => {
        {/* <FreeValueHook /> */}
        <SmartTradingQuiz />
        <FAQSection />
+       <Testimonials />
+
     </div>                                   
   );
 };
