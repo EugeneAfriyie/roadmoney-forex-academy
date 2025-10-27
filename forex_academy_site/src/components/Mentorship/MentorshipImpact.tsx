@@ -32,13 +32,28 @@ const MentorshipImpact: React.FC = () => {
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
   return (
-    <section className="relative py-24 px-6 sm:px-10 font-montserrat overflow-hidden bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white">
-      {/* Decorative glow */}
+    <section className="relative py-16 sm:py-20 md:py-24 px-6 sm:px-10 font-montserrat overflow-hidden bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white">
+      {/* Background & Glow Layers */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,200,150,0.08),transparent_70%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(0,200,150,0.05),transparent_70%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b0f19]/40 to-[#0b0f19] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto text-center">
+        {/* Section Header */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -54,47 +69,90 @@ const MentorshipImpact: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="text-white/70 max-w-2xl mx-auto mt-4 text-sm sm:text-base"
         >
-          Through consistent mentorship and structured learning, our academy continues to shape disciplined traders who
-          approach the markets with clarity, confidence, and purpose.
+          Through structured mentorship and faith-driven discipline, our academy
+          continues to shape traders who navigate the markets with clarity,
+          confidence, and purpose.
         </motion.p>
 
-        {/* Stats Section */}
-        <div className="mt-16 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        {/* Stats Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
+        >
           {stats.map((stat, index) => {
             const { ref, inView } = useInView({ triggerOnce: true });
             return (
               <motion.div
-                ref={ref}
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                ref={ref}
+                variants={cardVariants}
+                whileHover={{ rotateY: 4, rotateX: -3 }}
+                transition={{ type: "spring", stiffness: 200, damping: 12 }}
                 className="relative p-6 rounded-2xl bg-[#121826]/60 backdrop-blur-sm 
                            hover:bg-[#1a2233]/80 shadow-[0_0_20px_rgba(0,200,150,0.1)] 
                            hover:shadow-[0_0_30px_rgba(0,200,150,0.25)] transition-all duration-500"
               >
                 <div className="flex flex-col items-center text-center space-y-3">
-                  {stat.icon}
-                  <h3 className="text-3xl sm:text-4xl font-extrabold text-[#00e6a8]">
-                    {inView ? (
-                      <CountUp start={0} end={stat.value} duration={2.5} separator="," suffix="+" />
-                    ) : (
-                      "0+"
-                    )}
-                  </h3>
+                  {/* Animated Icon Glow */}
+                  <motion.div
+                    animate={
+                      inView
+                        ? {
+                            scale: [1, 1.2, 1],
+                            boxShadow: [
+                              "0 0 0 rgba(0,200,150,0)",
+                              "0 0 15px rgba(0,200,150,0.5)",
+                              "0 0 0 rgba(0,200,150,0)",
+                            ],
+                          }
+                        : {}
+                    }
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                  >
+                    {stat.icon}
+                  </motion.div>
+
+                  {/* Gradient Count-Up Number */}
+                  <motion.div
+                    animate={inView ? { scale: [1, 1.08, 1] } : {}}
+                    transition={{ repeat: 1, duration: 1.5, ease: "easeInOut" }}
+                  >
+                    <h3 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#00e6a8] to-[#00ffcc] bg-clip-text text-transparent">
+                      {inView ? (
+                        <CountUp
+                          start={0}
+                          end={stat.value}
+                          duration={2.8}
+                          separator=","
+                          suffix="+"
+                          easingFn={(t: number, b: number, c: number, d: number) => {
+                            t /= d;
+                            t--;
+                            return c * (t * t * t * t * t + 1) + b;
+                          }}
+                        />
+                      ) : (
+                        "0+"
+                      )}
+                    </h3>
+                  </motion.div>
+
                   <p className="text-base sm:text-lg font-semibold">{stat.label}</p>
                   <p className="text-xs sm:text-sm text-white/60">{stat.subtext}</p>
                 </div>
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
-        {/* CTA */}
+        {/* CTA Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-16"
         >
           <a

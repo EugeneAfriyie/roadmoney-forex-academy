@@ -4,6 +4,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import MentorshipHero from "../../components/Mentorship/MentorshipHero";
 import MentorshipCurriculum from "../../components/Mentorship/MentorshipCurriculum";
 import MentorshipImpact from "../../components/Mentorship/MentorshipImpact";
+import MentorshipPlans from "../../components/Mentorship/MentorshipPlans";
 
 
 const Mentorship: React.FC = () => {
@@ -18,9 +19,8 @@ const Mentorship: React.FC = () => {
     <main className={`font-montserrat transition-colors duration-500 ${bgClass} ${textClass}`}>
       <MentorshipHero />
       <MentorshipCurriculum />
-      {/* <MentorHighlight /> */}
       <MentorshipImpact />
-      {/* <MentorshipPlans /> */}
+      <MentorshipPlans />
       {/* <MentorshipCTA /> */}
     </main>
   );
