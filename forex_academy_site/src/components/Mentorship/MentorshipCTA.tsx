@@ -1,18 +1,24 @@
-// src/components/Mentorship/MentorshipCTA.tsx
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const MentorshipCTA: React.FC = () => {
+  const handleScrollToPlans = () => {
+    const section = document.getElementById("plans");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <section className="relative py-20 bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,200,150,0.08),transparent_70%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(255,215,0,0.06),transparent_70%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0b0f19]/60 to-[#0b0f19]" />
+      {/* Decorative Backgrounds — pointer events disabled */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(0,200,150,0.08),transparent_70%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_bottom_right,rgba(255,215,0,0.06),transparent_70%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-[#0b0f19]/60 to-[#0b0f19]" />
 
-      {/* Content */}
-      <div className="relative max-w-5xl mx-auto text-center px-6">
+      {/* Content — ensure it's above background */}
+      <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -28,23 +34,24 @@ const MentorshipCTA: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="text-white/80 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-10"
         >
-          Join hundreds of traders mastering consistency, risk management, and confidence through structured mentorship.
+          Join hundreds of traders mastering consistency, risk management, and
+          confidence through structured mentorship.
         </motion.p>
 
-        {/* Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-wrap justify-center gap-4"
         >
-          <a
-            href="/apply"
+          {/* ✅ Scroll-to button */}
+          <button
+            onClick={handleScrollToPlans}
             className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#00c896] text-black font-semibold 
                        hover:scale-105 hover:shadow-[0_0_25px_rgba(0,200,150,0.5)] transition-all duration-300"
           >
             Apply Now <ArrowRight size={18} />
-          </a>
+          </button>
 
           <a
             href="/community"
@@ -56,8 +63,8 @@ const MentorshipCTA: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Decorative Glow */}
-      <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#00c896]/20 rounded-full blur-[120px]" />
+      {/* Decorative Glow — also disable pointer events */}
+      <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#00c896]/20 rounded-full blur-[120px] pointer-events-none" />
     </section>
   );
 };

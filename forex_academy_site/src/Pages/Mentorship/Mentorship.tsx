@@ -5,6 +5,7 @@ import MentorshipHero from "../../components/Mentorship/MentorshipHero";
 import MentorshipCurriculum from "../../components/Mentorship/MentorshipCurriculum";
 import MentorshipImpact from "../../components/Mentorship/MentorshipImpact";
 import MentorshipPlans from "../../components/Mentorship/MentorshipPlans";
+import MentorshipCTA from "../../components/Mentorship/MentorshipCTA";
 
 
 const Mentorship: React.FC = () => {
@@ -21,7 +22,7 @@ const Mentorship: React.FC = () => {
       <MentorshipCurriculum />
       <MentorshipImpact />
       <MentorshipPlans />
-      {/* <MentorshipCTA /> */}
+      <MentorshipCTA />
     </main>
   );
 };

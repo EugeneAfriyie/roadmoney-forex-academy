@@ -92,7 +92,7 @@ export default function MentorshipPlans() {
   };
 
   return (
-    <section className="relative py-20 px-6 md:px-16 bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat">
+    <section id="plans" className="relative py-20 px-6 md:px-16 bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat">
       <div className="max-w-6xl mx-auto text-center">
         <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[#00ffcc]">Choose Your Mentorship Path</h2>
         <p className="text-[#ffffffcc] text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
