@@ -1,3 +1,4 @@
+// src/components/Mentorship/MentorshipHero.tsx (or PlansHero.tsx)
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -7,24 +8,36 @@ const slides = [
     id: 1,
     title: "Master the Art of Consistency",
     text: "Learn the proven system that turns confusion into confidence. Build structure, discipline, and control over your trades.",
-    img: "https://images.unsplash.com/photo-1563986768711-b3bde3dc821e?fm=jpg&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHRyYWRpbmd8ZW58MHx8MHx8fDA%3D&ixlib=rb-4.1.0&q=60&w=3000",
-    cta: "/apply",
+    img: "https://images.unsplash.com/photo-1563986768711-b3bde3dc821e?fm=jpg&q=60&w=3000",
+    ctaText: "Apply for Mentorship",
+    scrollTo: "plans",
   },
   {
     id: 2,
     title: "Mentorship That Builds Traders, Not Followers",
     text: "This is more than signals — it’s transformation. Get guided by a self-funded mentor who’s walked the same journey.",
     img: "https://images.unsplash.com/photo-1629792080390-9a59b7ef17f9?w=1600&h=900&fit=crop",
-    cta: "/about",
+    ctaText: "Explore Mentorship Plans",
+    scrollTo: "plans",
   },
   {
     id: 3,
+    title: "High-Quality Signal Plans for Every Trader",
+    text: "Access premium trading signals with real analysis and transparency. Perfect for traders seeking precision and consistency.",
+    img: "https://images.unsplash.com/photo-1569025690938-a00729c9e1aa?w=1600&h=900&fit=crop",
+    ctaText: "View Signal Plans",
+    scrollTo: "signals",
+  },
+  {
+    id: 4,
     title: "Join a Global Community of Traders",
     text: "Connect with others growing their skillset through webinars, challenges, and live Q&A sessions every month.",
     img: "https://res.cloudinary.com/djeorsh5d/image/upload/v1761140158/photo_2025-05-22_19-10-54_es9xb1.jpg",
-    cta: "/community",
+    ctaText: "Join the Community",
+    href: "/community",
   },
 ];
+
 const MentorshipHero: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -55,6 +68,11 @@ const MentorshipHero: React.FC = () => {
     else if (info.offset.x > 80) nextSlide(-1);
   };
 
+  const handleScroll = (targetId: string) => {
+    const section = document.getElementById(targetId);
+    if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const variants = {
     enter: (dir: number) => ({
       x: dir > 0 ? 100 : -100,
@@ -75,7 +93,7 @@ const MentorshipHero: React.FC = () => {
           <motion.img
             key={slides[current].id}
             src={slides[current].img}
-            alt="Mentorship background"
+            alt="Plans background"
             className="absolute inset-0 w-full h-full object-cover"
             custom={direction}
             variants={variants}
@@ -112,12 +130,24 @@ const MentorshipHero: React.FC = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href={slides[current].cta}
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#00c896] text-black font-semibold hover:scale-105 hover:shadow-[0_0_25px_rgba(0,200,150,0.5)] transition-all duration-300"
-            >
-              Learn More <ArrowRight size={18} />
-            </a>
+            {/* ✅ If slide has scroll target, smooth-scroll */}
+            {slides[current].scrollTo ? (
+              <button
+                onClick={() => handleScroll(slides[current].scrollTo!)}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#00c896] text-black font-semibold 
+                           hover:scale-105 hover:shadow-[0_0_25px_rgba(0,200,150,0.5)] transition-all duration-300"
+              >
+                {slides[current].ctaText} <ArrowRight size={18} />
+              </button>
+            ) : (
+              <a
+                href={slides[current].href}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#00c896] text-black font-semibold 
+                           hover:scale-105 hover:shadow-[0_0_25px_rgba(0,200,150,0.5)] transition-all duration-300"
+              >
+                {slides[current].ctaText} <ArrowRight size={18} />
+              </a>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>

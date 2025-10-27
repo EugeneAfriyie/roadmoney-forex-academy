@@ -1,11 +1,12 @@
 // src/pages/Mentorship/Mentorship.tsx
 import React, { useContext } from "react";
 import { ThemeContext } from "../../context/ThemeContext";
-import MentorshipHero from "../../components/Mentorship/MentorshipHero";
-import MentorshipCurriculum from "../../components/Mentorship/MentorshipCurriculum";
-import MentorshipImpact from "../../components/Mentorship/MentorshipImpact";
-import MentorshipPlans from "../../components/Mentorship/MentorshipPlans";
-import MentorshipCTA from "../../components/Mentorship/MentorshipCTA";
+import MentorshipHero from "../../components/Plans/PlansHero";
+import MentorshipCurriculum from "../../components/Plans/MentorshipCurriculum";
+import MentorshipImpact from "../../components/Plans/MentorshipImpact";
+import MentorshipPlans from "../../components/Plans/MentorshipPlans";
+import MentorshipCTA from "../../components/Plans/MentorshipCTA";
+import SignalPlans from "../../components/Plans/SignalPlans";
 
 
 const Mentorship: React.FC = () => {
@@ -22,6 +23,7 @@ const Mentorship: React.FC = () => {
       <MentorshipCurriculum />
       <MentorshipImpact />
       <MentorshipPlans />
+      <SignalPlans />
       <MentorshipCTA />
     </main>
   );
