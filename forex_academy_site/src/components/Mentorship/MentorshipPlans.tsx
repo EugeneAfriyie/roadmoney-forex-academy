@@ -3,98 +3,122 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 
+type PlanType = "inPerson" | "online";
+
+const PlanTypes = {
+  InPerson: "inPerson" as PlanType,
+  Online: "online" as PlanType,
+} as const;
+
+interface Package {
+  name: string;
+  price: string;
+  level: string;
+  benefits: string[];
+  premium?: boolean;
+}
+
+const inPersonPackages: Package[] = [
+  {
+    name: "Standard Mentorship",
+    price: "₵1,500",
+    level: "Beginner–Advanced",
+    benefits: [
+      "1 month intensive training",
+      "Access to mentorship group (For life)",
+      "Live trading sessions whiles learning",
+      "Weekly psychology sessions",
+      "Risk management session",
+      "Prop firm passing techniques",
+      "A Certificate of Participation",
+    ],
+    premium: false,
+  },
+  {
+    name: "Advanced Mentorship",
+    price: "₵2,500",
+    level: "Experienced Traders",
+    benefits: [
+      "1 month intensive training",
+      "Lifetime coaching",
+      "Access to mentorship group (For life)",
+      "Live and recorded sessions",
+      "Deep dive into my trading system",
+      "Weekly psychology sessions",
+      "Prop firm passing techniques",
+      "Advanced entry and exit criteria",
+      "Trading psychology mastery",
+      "Certificate of Excellence",
+    ],
+    premium: false,
+  },
+  {
+    name: "Premium Mentorship",
+    price: "₵4,000",
+    level: "Elite Personalized",
+    benefits: [
+      "1 month intensive personalized coaching",
+      "Lifetime access to 1-on-1 sessions",
+      "Priority access to mentorship group (For life)",
+      "Exclusive trading strategies & system deep dives",
+      "Weekly psychology + market outlook sessions",
+      "Private prop firm setup guide",
+      "Personal trading performance tracking",
+      "Certificate of Mastery",
+    ],
+    premium: true,
+  },
+];
+
+const onlinePackages: Package[] = [
+  {
+    name: "Standard Mentorship",
+    price: "₵1,000",
+    level: "Beginner–Advanced",
+    benefits: [
+      "1 month intensive online training",
+      "Lifetime access to private mentorship group",
+      "Weekly live trading sessions",
+      "Recorded classes for review",
+      "Risk management training",
+      "A Certificate of Participation",
+    ],
+    premium: false,
+  },
+  {
+    name: "Advanced Mentorship",
+    price: "₵2,000",
+    level: "Experienced Traders",
+    benefits: [
+      "1 month intensive advanced online mentorship",
+      "Lifetime coaching access",
+      "Deep dive into advanced trading systems",
+      "Weekly psychology and market review sessions",
+      "Prop firm strategies & risk management",
+      "A Certificate of Completion",
+    ],
+    premium: false,
+  },
+];
+
+const planVariants = {
+  hidden: { opacity: 0, y: 25 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, staggerChildren: 0.1 } },
+};
+
 export default function MentorshipPlans() {
-  const [activePlan, setActivePlan] = useState<"inPerson" | "online" | null>("inPerson");
+  const [activePlan, setActivePlan] = useState<PlanType | null>(PlanTypes.InPerson);
   const [showModal, setShowModal] = useState(false);
 
-  const inPersonPackages = [
-    {
-      name: "Standard Mentorship",
-      price: "₵1,500",
-      level: "Beginner–Advanced",
-      benefits: [
-        "1 month intensive training",
-        "Access to mentorship group (For life)",
-        "Live trading sessions whiles learning",
-        "Weekly psychology sessions",
-        "Risk management session",
-        "Prop firm passing techniques",
-        "A Certificate of Participation",
-      ],
-    },
-    {
-      name: "Advanced Mentorship",
-      price: "₵2,500",
-      level: "Experienced Traders",
-      benefits: [
-        "1 month intensive training",
-        "Lifetime coaching",
-        "Access to mentorship group (For life)",
-        "Live and recorded sessions",
-        "Deep dive into my trading system",
-        "Weekly psychology sessions",
-        "Prop firm passing techniques",
-        "Advanced entry and exit criteria",
-        "Trading psychology mastery",
-        "Certificate of Excellence",
-      ],
-    },
-    {
-      name: "Premium Mentorship",
-      price: "₵4,000",
-      level: "Elite Personalized",
-      benefits: [
-        "1 month intensive personalized coaching",
-        "Lifetime access to 1-on-1 sessions",
-        "Priority access to mentorship group (For life)",
-        "Exclusive trading strategies & system deep dives",
-        "Weekly psychology + market outlook sessions",
-        "Private prop firm setup guide",
-        "Personal trading performance tracking",
-        "Certificate of Mastery",
-      ],
-      premium: true,
-    },
-  ];
-
-  const onlinePackages = [
-    {
-      name: "Standard Mentorship",
-      price: "₵1,000",
-      level: "Beginner–Advanced",
-      benefits: [
-        "1 month intensive online training",
-        "Lifetime access to private mentorship group",
-        "Weekly live trading sessions",
-        "Recorded classes for review",
-        "Risk management training",
-        "A Certificate of Participation",
-      ],
-    },
-    {
-      name: "Advanced Mentorship",
-      price: "₵2,000",
-      level: "Experienced Traders",
-      benefits: [
-        "1 month intensive advanced online mentorship",
-        "Lifetime coaching access",
-        "Deep dive into advanced trading systems",
-        "Weekly psychology and market review sessions",
-        "Prop firm strategies & risk management",
-        "A Certificate of Completion",
-      ],
-    },
-  ];
-
-  const planVariants = {
-    hidden: { opacity: 0, y: 25 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4, staggerChildren: 0.1 } },
-  };
-
   return (
-    <section id="plans" className="relative py-20 px-6 md:px-16 bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat">
+    <section
+      id="plans"
+      className="relative py-20 px-6 md:px-16 bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat"
+    >
       <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[#00ffcc]">Choose Your Mentorship Path</h2>
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[#00ffcc]">
+          Choose Your Mentorship Path
+        </h2>
         <p className="text-[#ffffffcc] text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
           Whether you prefer hands-on training or the flexibility of online mentorship, we’ve got a package tailored just for you.
         </p>
@@ -104,9 +128,9 @@ export default function MentorshipPlans() {
         {/* Toggle Buttons */}
         <div className="flex flex-wrap justify-center gap-4 mb-10">
           <button
-            onClick={() => setActivePlan(activePlan === "inPerson" ? null : "inPerson")}
+            onClick={() => setActivePlan(activePlan === PlanTypes.InPerson ? null : PlanTypes.InPerson)}
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
-              activePlan === "inPerson"
+              activePlan === PlanTypes.InPerson
                 ? "bg-[#00ffcc] text-[#0b0f19] shadow-[0_0_20px_#00ffcc80]"
                 : "border border-[#00ffcc80] text-[#00ffcc] hover:bg-[#00ffcc20]"
             }`}
@@ -115,9 +139,9 @@ export default function MentorshipPlans() {
           </button>
 
           <button
-            onClick={() => setActivePlan(activePlan === "online" ? null : "online")}
+            onClick={() => setActivePlan(activePlan === PlanTypes.Online ? null : PlanTypes.Online)}
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
-              activePlan === "online"
+              activePlan === PlanTypes.Online
                 ? "bg-[#FFD700] text-[#0b0f19] shadow-[0_0_20px_#FFD70080]"
                 : "border border-[#FFD70080] text-[#FFD700] hover:bg-[#FFD70020]"
             }`}
@@ -136,7 +160,7 @@ export default function MentorshipPlans() {
               exit="hidden"
               className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
             >
-              {(activePlan === "inPerson" ? inPersonPackages : onlinePackages).map((pkg) => (
+              {(activePlan === PlanTypes.InPerson ? inPersonPackages : onlinePackages).map((pkg) => (
                 <motion.article
                   key={pkg.name}
                   className={`snap-start min-w-[85%] md:min-w-0 md:w-auto bg-[#121826]/80 border border-[#00ffcc40] rounded-2xl p-6 backdrop-blur-sm
@@ -191,6 +215,10 @@ export default function MentorshipPlans() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            role="dialog"
+            aria-labelledby="modal-title"
+            onKeyDown={(e) => e.key === "Escape" && setShowModal(false)}
+            tabIndex={-1}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -199,7 +227,9 @@ export default function MentorshipPlans() {
               transition={{ duration: 0.3 }}
               className="bg-[#121826] border border-[#00ffcc40] rounded-2xl p-8 w-[90%] max-w-md text-center"
             >
-              <h4 className="text-2xl font-bold mb-4 text-[#00ffcc]">Registration Coming Soon</h4>
+              <h4 id="modal-title" className="text-2xl font-bold mb-4 text-[#00ffcc]">
+                Registration Coming Soon
+              </h4>
               <p className="text-[#ffffffb3] mb-6">
                 Our mentorship enrollment system is being finalized. Stay tuned — registration opens soon!
               </p>

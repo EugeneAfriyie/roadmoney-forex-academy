@@ -8,6 +8,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      
       colors: {
         navy: '#001F3F',
         darkNavy: '#001022',
@@ -28,6 +29,12 @@ const config: Config = {
         'neon-glow': '0 0 10px rgba(57, 255, 20, 0.5)',
         'gold-glow': '0 0 10px rgba(255, 215, 0, 0.5)',
       },
+      utilities: {
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }},
     },
   },
   plugins: [

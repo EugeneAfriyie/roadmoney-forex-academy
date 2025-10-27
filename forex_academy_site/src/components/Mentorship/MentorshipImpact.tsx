@@ -1,52 +1,63 @@
-import React from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
 import { Users, Mic, Share2, Target } from "lucide-react";
 
-const MentorshipImpact: React.FC = () => {
-  const stats = [
-    {
-      icon: <Users className="w-8 h-8 text-[#00c896]" />,
-      value: 1200,
-      label: "Traders Trained",
-      subtext: "Across 15+ countries",
-    },
-    {
-      icon: <Mic className="w-8 h-8 text-[#00c896]" />,
-      value: 80,
-      label: "Webinars Hosted",
-      subtext: "Interactive & insightful",
-    },
-    {
-      icon: <Target className="w-8 h-8 text-[#00c896]" />,
-      value: 95,
-      label: "Success Rate",
-      subtext: "Among consistent students",
-    },
-    {
-      icon: <Share2 className="w-8 h-8 text-[#00c896]" />,
-      value: 15000,
-      label: "Social Reach",
-      subtext: "Inspiring daily traders",
-    },
-  ];
+interface Stat {
+  icon: React.ReactNode;
+  value: number;
+  label: string;
+  subtext: string;
+}
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2 },
-    },
-  };
+const stats: Stat[] = [
+  {
+    icon: <Users className="w-8 h-8 text-[#00c896]" />,
+    value: 1200,
+    label: "Traders Trained",
+    subtext: "Across 15+ countries",
+  },
+  {
+    icon: <Mic className="w-8 h-8 text-[#00c896]" />,
+    value: 80,
+    label: "Webinars Hosted",
+    subtext: "Interactive & insightful",
+  },
+  {
+    icon: <Target className="w-8 h-8 text-[#00c896]" />,
+    value: 95,
+    label: "Success Rate",
+    subtext: "Among consistent students",
+  },
+  {
+    icon: <Share2 className="w-8 h-8 text-[#00c896]" />,
+    value: 15000,
+    label: "Social Reach",
+    subtext: "Inspiring daily traders",
+  },
+];
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-  };
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+export default function MentorshipImpact() {
+  const { ref, inView } = useInView({ triggerOnce: true });
 
   return (
-    <section className="relative py-16 sm:py-20 md:py-24 px-6 sm:px-10 font-montserrat overflow-hidden bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white">
+    <section
+      ref={ref}
+      className="relative py-16 sm:py-20 md:py-24 px-6 sm:px-10 font-montserrat overflow-hidden bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white"
+    >
       {/* Background & Glow Layers */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,200,150,0.08),transparent_70%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(0,200,150,0.05),transparent_70%)]" />
@@ -78,74 +89,70 @@ const MentorshipImpact: React.FC = () => {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
+          animate={inView ? "visible" : "hidden"}
           viewport={{ once: true }}
           className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
         >
-          {stats.map((stat, index) => {
-            const { ref, inView } = useInView({ triggerOnce: true });
-            return (
-              <motion.div
-                key={index}
-                ref={ref}
-                variants={cardVariants}
-                whileHover={{ rotateY: 4, rotateX: -3 }}
-                transition={{ type: "spring", stiffness: 200, damping: 12 }}
-                className="relative p-6 rounded-2xl bg-[#121826]/60 backdrop-blur-sm 
-                           hover:bg-[#1a2233]/80 shadow-[0_0_20px_rgba(0,200,150,0.1)] 
-                           hover:shadow-[0_0_30px_rgba(0,200,150,0.25)] transition-all duration-500"
-              >
-                <div className="flex flex-col items-center text-center space-y-3">
-                  {/* Animated Icon Glow */}
-                  <motion.div
-                    animate={
-                      inView
-                        ? {
-                            scale: [1, 1.2, 1],
-                            boxShadow: [
-                              "0 0 0 rgba(0,200,150,0)",
-                              "0 0 15px rgba(0,200,150,0.5)",
-                              "0 0 0 rgba(0,200,150,0)",
-                            ],
-                          }
-                        : {}
-                    }
-                    transition={{ duration: 1.5, ease: "easeInOut" }}
-                  >
-                    {stat.icon}
-                  </motion.div>
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              variants={cardVariants}
+              whileHover={{ rotateY: 4, rotateX: -3 }}
+              transition={{ type: "spring", stiffness: 200, damping: 12 }}
+              className="relative p-6 rounded-2xl bg-[#121826]/60 backdrop-blur-sm 
+                         hover:bg-[#1a2233]/80 shadow-[0_0_20px_rgba(0,200,150,0.1)] 
+                         hover:shadow-[0_0_30px_rgba(0,200,150,0.25)] transition-all duration-500"
+            >
+              <div className="flex flex-col items-center text-center space-y-3">
+                {/* Animated Icon Glow */}
+                <motion.div
+                  animate={
+                    inView
+                      ? {
+                          scale: [1, 1.2, 1],
+                          boxShadow: [
+                            "0 0 0 rgba(0,200,150,0)",
+                            "0 0 15px rgba(0,200,150,0.5)",
+                            "0 0 0 rgba(0,200,150,0)",
+                          ],
+                        }
+                      : {}
+                  }
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                >
+                  {stat.icon}
+                </motion.div>
 
-                  {/* Gradient Count-Up Number */}
-                  <motion.div
-                    animate={inView ? { scale: [1, 1.08, 1] } : {}}
-                    transition={{ repeat: 1, duration: 1.5, ease: "easeInOut" }}
-                  >
-                    <h3 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#00e6a8] to-[#00ffcc] bg-clip-text text-transparent">
-                      {inView ? (
-                        <CountUp
-                          start={0}
-                          end={stat.value}
-                          duration={2.8}
-                          separator=","
-                          suffix="+"
-                          easingFn={(t: number, b: number, c: number, d: number) => {
-                            t /= d;
-                            t--;
-                            return c * (t * t * t * t * t + 1) + b;
-                          }}
-                        />
-                      ) : (
-                        "0+"
-                      )}
-                    </h3>
-                  </motion.div>
+                {/* Gradient Count-Up Number */}
+                <motion.div
+                  animate={inView ? { scale: [1, 1.08, 1] } : {}}
+                  transition={{ repeat: 1, duration: 1.5, ease: "easeInOut" }}
+                >
+                  <h3 className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#00e6a8] to-[#00ffcc] bg-clip-text text-transparent">
+                    {inView ? (
+                      <CountUp
+                        start={0}
+                        end={stat.value}
+                        duration={2.8}
+                        separator=","
+                        suffix="+"
+                        easingFn={(t: number, b: number, c: number, d: number) => {
+                          t /= d;
+                          t--;
+                          return c * (t * t * t * t * t + 1) + b;
+                        }}
+                      />
+                    ) : (
+                      "0+"
+                    )}
+                  </h3>
+                </motion.div>
 
-                  <p className="text-base sm:text-lg font-semibold">{stat.label}</p>
-                  <p className="text-xs sm:text-sm text-white/60">{stat.subtext}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+                <p className="text-base sm:text-lg font-semibold">{stat.label}</p>
+                <p className="text-xs sm:text-sm text-white/60">{stat.subtext}</p>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
 
         {/* CTA Button */}
@@ -166,6 +173,4 @@ const MentorshipImpact: React.FC = () => {
       </div>
     </section>
   );
-};
-
-export default MentorshipImpact;
+}
