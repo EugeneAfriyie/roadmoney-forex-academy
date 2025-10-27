@@ -51,7 +51,7 @@ const Header: React.FC = () => {
             {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
               <li key={link}>
                 <motion.a
-                  href={`/${link.toLowerCase()}`}
+                  href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}
                   className="hover:text-[#00c896] transition-colors relative group"
                   whileHover={{ scale: 1.05 }} // Replace Tailwind scale-105
                   transition={{ duration: 0.2 }}
@@ -92,7 +92,7 @@ const Header: React.FC = () => {
           {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
             <li key={link}>
               <motion.a
-                href={`/${link.toLowerCase()}`}
+                href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}   
                 className="hover:text-[#00c896] transition-colors"
                 whileHover={{ scale: 1.05 }} // Replace Tailwind scale-105
                 transition={{ duration: 0.2 }}
