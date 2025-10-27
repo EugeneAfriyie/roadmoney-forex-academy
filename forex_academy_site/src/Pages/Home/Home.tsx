@@ -25,7 +25,7 @@ import FAQSection from '../../components/Home/FAQSection/FAQSection';
 
 const Home: React.FC = () => {
   return (
-    <div>
+    <div className='pt-20'>
       {/* const globeImage = theme === 'dark' ? '/assets/globe/dark.png' : '/assets/globe/light.png'; */}
 
       <Hero />
