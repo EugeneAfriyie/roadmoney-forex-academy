@@ -48,7 +48,7 @@ const Header: React.FC = () => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
           <ul className={`flex space-x-6 items-center ${textClass}`}>
-            {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
+            {['Home', 'About', 'Plans', 'Resources', 'Contact'].map((link) => (
               <li key={link}>
                 <motion.a
                   href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}
@@ -89,7 +89,7 @@ const Header: React.FC = () => {
         className={`md:hidden ${bgClass} overflow-hidden`}
       >
         <ul className={`flex flex-col items-center py-4 space-y-4 ${textClass}`}>
-          {['Home', 'About', 'Mentorship', 'Resources', 'Contact'].map((link) => (
+          {['Home', 'About', 'Plans', 'Resources', 'Contact'].map((link) => (
             <li key={link}>
               <motion.a
                 href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}   

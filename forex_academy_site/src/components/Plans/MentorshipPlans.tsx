@@ -1,5 +1,5 @@
 // Eugene Afriyie UEB3502023
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 
@@ -12,7 +12,7 @@ const PlanTypes = {
 
 interface Package {
   name: string;
-  price: string;
+  priceUsd: number;
   level: string;
   benefits: string[];
   premium?: boolean;
@@ -21,22 +21,21 @@ interface Package {
 const inPersonPackages: Package[] = [
   {
     name: "Standard Mentorship",
-    price: "₵1,500",
+    priceUsd: 120,
     level: "Beginner–Advanced",
     benefits: [
       "1 month intensive training",
       "Access to mentorship group (For life)",
-      "Live trading sessions whiles learning",
+      "Live trading sessions while learning",
       "Weekly psychology sessions",
       "Risk management session",
       "Prop firm passing techniques",
       "A Certificate of Participation",
     ],
-    premium: false,
   },
   {
     name: "Advanced Mentorship",
-    price: "₵2,500",
+    priceUsd: 200,
     level: "Experienced Traders",
     benefits: [
       "1 month intensive training",
@@ -50,11 +49,10 @@ const inPersonPackages: Package[] = [
       "Trading psychology mastery",
       "Certificate of Excellence",
     ],
-    premium: false,
   },
   {
     name: "Premium Mentorship",
-    price: "₵4,000",
+    priceUsd: 300,
     level: "Elite Personalized",
     benefits: [
       "1 month intensive personalized coaching",
@@ -73,7 +71,7 @@ const inPersonPackages: Package[] = [
 const onlinePackages: Package[] = [
   {
     name: "Standard Mentorship",
-    price: "₵1,000",
+    priceUsd: 90,
     level: "Beginner–Advanced",
     benefits: [
       "1 month intensive online training",
@@ -83,11 +81,10 @@ const onlinePackages: Package[] = [
       "Risk management training",
       "A Certificate of Participation",
     ],
-    premium: false,
   },
   {
     name: "Advanced Mentorship",
-    price: "₵2,000",
+    priceUsd: 150,
     level: "Experienced Traders",
     benefits: [
       "1 month intensive advanced online mentorship",
@@ -97,7 +94,6 @@ const onlinePackages: Package[] = [
       "Prop firm strategies & risk management",
       "A Certificate of Completion",
     ],
-    premium: false,
   },
 ];
 
@@ -109,6 +105,28 @@ const planVariants = {
 export default function MentorshipPlans() {
   const [activePlan, setActivePlan] = useState<PlanType | null>(PlanTypes.InPerson);
   const [showModal, setShowModal] = useState(false);
+  const [usdToGhs, setUsdToGhs] = useState<number | null>(null);
+
+  // ✅ Fetch exchange rate once at mount
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        const res = await fetch("https://open.er-api.com/v6/latest/USD");
+        const data = await res.json();
+
+        if (data?.rates?.GHS) {
+          setUsdToGhs(data.rates.GHS + 2); // Add retail margin
+        } else {
+          console.warn("⚠️ Fallback rate used");
+          setUsdToGhs(10.83 + 2);
+        }
+      } catch (err) {
+        console.warn("⚠️ Using fallback USD→GHS rate");
+        setUsdToGhs(10.83 + 2);
+      }
+    };
+    fetchRate();
+  }, []);
 
   return (
     <section
@@ -126,9 +144,11 @@ export default function MentorshipPlans() {
         <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent mx-auto mb-12" />
 
         {/* Toggle Buttons */}
-        <div className="flex  justify-center gap-4 mb-10">
+        <div className="flex justify-center gap-4 mb-10">
           <button
-            onClick={() => setActivePlan(activePlan === PlanTypes.InPerson ? null : PlanTypes.InPerson)}
+            onClick={() =>
+              setActivePlan(activePlan === PlanTypes.InPerson ? null : PlanTypes.InPerson)
+            }
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activePlan === PlanTypes.InPerson
                 ? "bg-[#00ffcc] text-[#0b0f19] shadow-[0_0_20px_#00ffcc80]"
@@ -139,7 +159,9 @@ export default function MentorshipPlans() {
           </button>
 
           <button
-            onClick={() => setActivePlan(activePlan === PlanTypes.Online ? null : PlanTypes.Online)}
+            onClick={() =>
+              setActivePlan(activePlan === PlanTypes.Online ? null : PlanTypes.Online)
+            }
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activePlan === PlanTypes.Online
                 ? "bg-[#FFD700] text-[#0b0f19] shadow-[0_0_20px_#FFD70080]"
@@ -150,9 +172,14 @@ export default function MentorshipPlans() {
           </button>
         </div>
 
+        {/* Loading state */}
+        {!usdToGhs && (
+          <p className="text-white/70 animate-pulse">Fetching current exchange rate...</p>
+        )}
+
         {/* Packages */}
         <AnimatePresence>
-          {activePlan && (
+          {activePlan && usdToGhs && (
             <motion.div
               variants={planVariants}
               initial="hidden"
@@ -160,12 +187,15 @@ export default function MentorshipPlans() {
               exit="hidden"
               className="flex md:grid md:grid-cols-3 gap-6 md:overflow-hidden overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-6"
             >
-              {(activePlan === PlanTypes.InPerson ? inPersonPackages : onlinePackages).map((pkg) => (
+              {(activePlan === PlanTypes.InPerson
+                ? inPersonPackages
+                : onlinePackages
+              ).map((pkg) => (
                 <motion.article
                   key={pkg.name}
                   className={`snap-start min-w-[85%] md:min-w-0 md:w-auto bg-[#121826]/80 border border-[#00ffcc40] rounded-2xl p-6 backdrop-blur-sm
-                  hover:scale-[1.03] transition-all duration-300 shadow-[0_0_25px_#00ffcc30]
-                  ${pkg.premium ? "md:scale-[1.05] border-[#FFD70080] shadow-[0_0_30px_#FFD70050]" : ""}`}
+                    hover:scale-[1.03] transition-all duration-300 shadow-[0_0_25px_#00ffcc30]
+                    ${pkg.premium ? "md:scale-[1.05] border-[#FFD70080] shadow-[0_0_30px_#FFD70050]" : ""}`}
                 >
                   <h3
                     className={`text-2xl font-semibold mb-3 ${
@@ -175,7 +205,16 @@ export default function MentorshipPlans() {
                     {pkg.name}
                   </h3>
                   <p className="text-[#ffffffb3] text-sm mb-2">{pkg.level}</p>
-                  <p className="text-3xl font-bold mb-4 text-[#FFD700]">{pkg.price}</p>
+
+                  {/* ✅ Show both USD and converted GHS */}
+                  <div className="mb-4">
+                    <p className="text-3xl font-bold text-[#FFD700]">
+                      ${pkg.priceUsd.toFixed(2)} USD
+                    </p>
+                    <p className="text-sm text-[#00ffcc]">
+                      ≈ ₵{(pkg.priceUsd * usdToGhs).toFixed(2)} GHS
+                    </p>
+                  </div>
 
                   <ul className="text-left text-[#ffffffcc] text-sm leading-relaxed mb-4 space-y-2">
                     {pkg.benefits.map((benefit) => (
@@ -215,10 +254,6 @@ export default function MentorshipPlans() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
-            role="dialog"
-            aria-labelledby="modal-title"
-            onKeyDown={(e) => e.key === "Escape" && setShowModal(false)}
-            tabIndex={-1}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -227,7 +262,7 @@ export default function MentorshipPlans() {
               transition={{ duration: 0.3 }}
               className="bg-[#121826] border border-[#00ffcc40] rounded-2xl p-8 w-[90%] max-w-md text-center"
             >
-              <h4 id="modal-title" className="text-2xl font-bold mb-4 text-[#00ffcc]">
+              <h4 className="text-2xl font-bold mb-4 text-[#00ffcc]">
                 Registration Coming Soon
               </h4>
               <p className="text-[#ffffffb3] mb-6">
