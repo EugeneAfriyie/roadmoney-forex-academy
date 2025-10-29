@@ -99,7 +99,7 @@ const onlinePackages: Package[] = [
 
 export default function MentorshipPlans() {
   const [activePlan, setActivePlan] = useState<PlanType>(PlanTypes.InPerson);
-  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(inPersonPackages[0]);
   const [usdToGhs, setUsdToGhs] = useState<number | null>(null);
 
   useEffect(() => {
@@ -118,6 +118,11 @@ export default function MentorshipPlans() {
 
   const packages = activePlan === PlanTypes.InPerson ? inPersonPackages : onlinePackages;
 
+  // ✅ Auto-select first package whenever plan type changes
+  useEffect(() => {
+    setSelectedPackage(packages[0]);
+  }, [activePlan]);
+
   return (
     <section
       id="plans"
@@ -134,10 +139,7 @@ export default function MentorshipPlans() {
         {/* Toggle Buttons */}
         <div className="flex justify-center gap-4 mb-10">
           <button
-            onClick={() => {
-              setActivePlan(PlanTypes.InPerson);
-              setSelectedPackage(null);
-            }}
+            onClick={() => setActivePlan(PlanTypes.InPerson)}
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activePlan === PlanTypes.InPerson
                 ? "bg-[#00ffcc] text-[#0b0f19] shadow-[0_0_20px_#00ffcc80]"
@@ -148,10 +150,7 @@ export default function MentorshipPlans() {
           </button>
 
           <button
-            onClick={() => {
-              setActivePlan(PlanTypes.Online);
-              setSelectedPackage(null);
-            }}
+            onClick={() => setActivePlan(PlanTypes.Online)}
             className={`px-6 py-3 rounded-xl font-semibold transition-all ${
               activePlan === PlanTypes.Online
                 ? "bg-[#FFD700] text-[#0b0f19] shadow-[0_0_20px_#FFD70080]"
@@ -166,20 +165,21 @@ export default function MentorshipPlans() {
           <p className="text-white/70 animate-pulse">Fetching current exchange rate...</p>
         ) : (
           <div className="flex flex-col md:flex-row gap-10 items-start justify-center">
-            {/* Left side: Plans */}
-            <div className="flex flex-col w-full md:w-1/3 gap-4">
+            {/* Left side (plans) */}
+            <div className="flex md:flex-col w-full md:w-1/3 gap-4 overflow-x-auto md:overflow-visible scrollbar-thin scrollbar-thumb-[#00ffcc]/70 scrollbar-track-transparent pb-4 snap-x snap-mandatory">
               {packages.map((pkg) => (
                 <motion.div
                   key={pkg.name}
                   onClick={() => setSelectedPackage(pkg)}
                   whileHover={{ scale: 1.02 }}
-                  className={`cursor-pointer p-5 rounded-2xl border transition-all ${
-                    selectedPackage?.name === pkg.name
-                      ? pkg.premium
-                        ? "bg-[#FFD70020] border-[#FFD70080] shadow-[0_0_25px_#FFD70050]"
-                        : "bg-[#00ffcc20] border-[#00ffcc80] shadow-[0_0_25px_#00ffcc50]"
-                      : "border-[#ffffff20] hover:border-[#00ffcc60]"
-                  }`}
+                  className={`cursor-pointer p-5 rounded-2xl border transition-all min-w-[80%] md:min-w-0 snap-start
+                    ${
+                      selectedPackage?.name === pkg.name
+                        ? pkg.premium
+                          ? "bg-[#FFD70020] border-[#FFD70080] shadow-[0_0_25px_#FFD70050]"
+                          : "bg-[#00ffcc20] border-[#00ffcc80] shadow-[0_0_25px_#00ffcc50]"
+                        : "border-[#ffffff20] hover:border-[#00ffcc60]"
+                    }`}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <h3
@@ -198,7 +198,7 @@ export default function MentorshipPlans() {
               ))}
             </div>
 
-            {/* Right side: Details */}
+            {/* Right side (details) */}
             <AnimatePresence>
               {selectedPackage && (
                 <motion.div
@@ -207,7 +207,7 @@ export default function MentorshipPlans() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 40 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full md:w-2/4 bg-[#121826]/70 border border-[#00ffcc40] rounded-2xl p-8 backdrop-blur-sm shadow-[0_0_25px_#00ffcc20]"
+                  className="w-full md:w-2/3 bg-[#121826]/70 border border-[#00ffcc40] rounded-2xl p-8 backdrop-blur-sm shadow-[0_0_25px_#00ffcc20]"
                 >
                   <h3
                     className={`text-2xl font-semibold mb-4 ${
