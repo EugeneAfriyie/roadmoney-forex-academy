@@ -4,10 +4,11 @@ import { ThemeContext } from "../../context/ThemeContext";
 import MentorshipHero from "../../components/Plans/PlansHero";
 import MentorshipCurriculum from "../../components/Plans/MentorshipCurriculum";
 import MentorshipImpact from "../../components/Plans/MentorshipImpact";
-import MentorshipPlans from "../../components/Plans/MentorshipPlans";
+// import MentorshipPlans from "../../components/Plans/MentorshipPlans";
 import MentorshipCTA from "../../components/Plans/MentorshipCTA";
 import SignalPlans from "../../components/Plans/SignalPlans";
 import ServicesPlans from "../../components/Plans/ServicesPlans";
+import MentorshipPlans from "../../components/Plans/TestMentordhip";
 
 
 const Mentorship: React.FC = () => {
@@ -27,6 +28,7 @@ const Mentorship: React.FC = () => {
       <SignalPlans />
       {/* <ServicesPlans /> */}
       <MentorshipCTA />
+      
     </main>
   );
 };
