@@ -1,147 +1,181 @@
-import React, { useContext, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import Tilt from 'react-parallax-tilt';
-import { ThemeContext } from '../context/ThemeContext';
-import AnimatedBackground from './Home/WhatIsForex/AnimatedBackground';
-import SectionHeader from './Home/QuoteCard/SectionHeader';
-// import { ThemeContext } from '../context/ThemeProvider';
-// import AnimatedBackground from './AnimatedBackground';
-// import SectionHeader from './SectionHeader';
+// src/components/Testimonials.tsx
+import React, { useContext, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ThemeContext } from "../context/ThemeContext";
+import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import Tilt from "react-parallax-tilt";
 
-interface TestimonialCardProps {
-  quote: string;
-  author: string;
-  index: number;
-  isActive: boolean;
-}
-
-const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, author, index, isActive }) => {
-  const { theme } = useContext(ThemeContext);
-  const cardBgClass = theme === 'dark' ? 'bg-[#121826]/50' : 'bg-white/80';
-
-  return (
-    <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} perspective={1000}>
-      <motion.div
-        initial={{ opacity: 0, x: index * 100, scale: 0.95 }}
-        animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : index * 100, scale: isActive ? 1 : 0.95 }}
-        exit={{ opacity: 0, x: index * -100, scale: 0.95 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className={`card border border-[#00c896]/40 dark:border-[#00ffcc]/30 rounded-2xl p-6 text-center hover:border-[#00c896] dark:hover:border-[#00ffcc] hover:bg-[#00c896]/10 dark:hover:bg-[#00ffcc]/10 hover:shadow-[0_0_10px_rgba(0,200,150,0.3)] transition-all duration-300 ${cardBgClass} bg-[url('/assets/noise-pattern.png')] bg-opacity-5 max-w-lg mx-2`}
-      >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: isActive ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: 0.1, type: 'spring', stiffness: 100 }}
-        >
-          <Quote size={26} className="text-[#00c896] dark:text-[#00ffcc] mx-auto mb-2 drop-shadow-[0_0_5px_rgba(0,200,150,0.5)]" />
-        </motion.div>
-        <p className="text-sm sm:text-base italic">"{quote}"</p>
-        <p className="mt-4 text-sm font-semibold text-[#00c896] dark:text-[#00ffcc]">{author}</p>
-      </motion.div>
-    </Tilt>
-  );
-};
+const testimonials = [
+  {
+    name: "Sarah K.",
+    role: "Beginner Trader",
+    quote:
+      "RoadMoney’s mentorship reshaped how I see the markets. Within months, I finally achieved consistency and confidence in every trade.",
+    image: "/assets/testimonials/sarah.jpg",
+  },
+  {
+    name: "James L.",
+    role: "Full-Time Forex Trader",
+    quote:
+      "The advanced risk management lessons gave me total control of my capital. It’s the best investment I’ve made in my trading career.",
+    image: "/assets/testimonials/james.jpg",
+  },
+  {
+    name: "Emma R.",
+    role: "Part-Time Trader",
+    quote:
+      "I joined RoadMoney’s mentorship while working full-time — now my trading income exceeds my salary. Truly life-changing.",
+    image: "/assets/testimonials/emma.jpg",
+  },
+  {
+    name: "Michael T.",
+    role: "Professional Analyst",
+    quote:
+      "RoadMoney combines technical mastery with emotional discipline. I recommend it to anyone who takes trading seriously.",
+    image: "/assets/testimonials/michael.jpg",
+  },
+  {
+    name: "Ava D.",
+    role: "Crypto & Forex Enthusiast",
+    quote:
+      "The mentorship made complex strategies simple. I’ve doubled my accuracy and learned how to protect my wins.",
+    image: "/assets/testimonials/ava.jpg",
+  },
+];
 
 const Testimonials: React.FC = () => {
   const { theme } = useContext(ThemeContext);
+  const isDark = theme === "dark";
   const [current, setCurrent] = useState(0);
 
-  const bgClass =
-    theme === 'dark'
-      ? 'bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19]'
-      : 'bg-gradient-to-b from-[#f8f9fb] via-[#e0e2e7] to-[#f8f9fb]';
-  const textClass = theme === 'dark' ? 'text-[#ffffffcc]' : 'text-[#000000]';
+  // Auto-slide every 6 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const testimonials = [
-    {
-      quote: 'RoadMoney’s mentorship transformed my trading skills, helping me achieve consistent profits in just months!',
-      author: 'Sarah K., Beginner Trader',
-    },
-    {
-      quote: 'The strategies I learned from RoadMoney gave me the confidence to trade Forex full-time.',
-      author: 'James L., Professional Trader',
-    },
-    {
-      quote: 'Thanks to RoadMoney, I turned my side hustle into a thriving career with financial freedom.',
-      author: 'Emma R., Part-Time Trader',
-    },
-  ];
-
-  const handlePrev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  const handlePrev = () =>
+    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   const handleNext = () => setCurrent((prev) => (prev + 1) % testimonials.length);
+
+  const t = testimonials[current];
 
   return (
     <section
       id="testimonials"
-      aria-labelledby="testimonials-heading"
-      className={`relative py-20 overflow-hidden ${bgClass} ${textClass} font-montserrat transition-colors duration-500`}
+      className={`relative py-24 overflow-hidden font-montserrat ${
+        isDark
+          ? "bg-gradient-to-br from-[#0b0f19] via-[#121826] to-[#0b0f19]"
+          : "bg-gradient-to-br from-[#f9fafb] via-[#e6f7f4] to-[#f0fdfa]"
+      }`}
     >
-      <AnimatedBackground />
+      {/* Animated Glow */}
       <motion.div
-        className="absolute bottom-[-15%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-tr from-[#00ffcc] to-[#00c896] blur-[180px] opacity-20"
+        className="absolute inset-0 bg-gradient-to-tr from-[#00c896]/10 via-[#00ffcc]/10 to-transparent blur-[150px]"
         animate={{
-          x: ['0%', '-20%', '10%', '0%'],
-          y: ['0%', '-10%', '15%', '0%'],
-          scale: [1, 1.1, 1.05, 1],
-          rotate: [0, -40, 30, 0],
+          backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
         }}
-        transition={{ duration: 35, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
       />
-      <div className="relative max-w-7xl mx-auto px-4 xs:px-6 sm:px-8 lg:px-12 z-10">
-        <SectionHeader title="What Our Traders Say" id="testimonials-heading" />
+
+      {/* Header */}
+      <div className="relative z-10 text-center mb-16 px-6">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl md:text-5xl font-bold text-[#00c896]"
+        >
+          What Traders Say
+        </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-          viewport={{ once: true }}
-          className={`text-base sm:text-lg text-center max-w-3xl mx-auto mb-12 ${textClass}`}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className={`mt-4 text-base md:text-lg max-w-3xl mx-auto ${
+            isDark ? "text-gray-300" : "text-gray-700"
+          }`}
         >
-          Hear from traders who transformed their lives with RoadMoney’s expert mentorship and proven strategies.
+          Real stories from traders who turned knowledge into profit with
+          <span className="text-[#00c896] font-semibold"> RoadMoney.</span>
         </motion.p>
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            <div key={current} className="flex justify-center">
-              <TestimonialCard
-                quote={testimonials[current].quote}
-                author={testimonials[current].author}
-                index={0}
-                isActive={true}
-              />
-            </div>
-          </AnimatePresence>
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-[#00c896]/20 hover:bg-[#00c896]/40 transition-colors"
+      </div>
+
+      {/* Testimonial Slider */}
+      <div className="relative z-10 max-w-3xl mx-auto text-center px-6">
+        <AnimatePresence mode="wait">
+          <Tilt tiltMaxAngleX={6} tiltMaxAngleY={6} perspective={900} key={current}>
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={{ duration: 0.8 }}
+              className={`p-10 rounded-2xl backdrop-blur-xl border ${
+                isDark
+                  ? "bg-white/5 border-[#00c896]/20"
+                  : "bg-white/80 border-[#00c896]/30"
+              } shadow-xl`}
+            >
+              <Quote className="mx-auto mb-4 text-[#00c896]" size={36} />
+              <p
+                className={`italic text-lg leading-relaxed ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                “{t.quote}”
+              </p>
+
+              <div className="mt-8 flex flex-col items-center">
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  className="w-20 h-20 rounded-full border-2 border-[#00c896]/70 shadow-md mb-3"
+                />
+                <h4 className="text-lg font-semibold">{t.name}</h4>
+                <p
+                  className={`text-sm ${
+                    isDark ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  {t.role}
+                </p>
+              </div>
+            </motion.div>
+          </Tilt>
+        </AnimatePresence>
+
+        {/* Navigation */}
+        <div className="flex justify-center items-center gap-4 mt-10">
+          <button
             onClick={handlePrev}
-            aria-label="Previous testimonial"
+            className="p-2 rounded-full bg-[#00c896]/20 hover:bg-[#00c896]/40 transition"
           >
-            <ChevronLeft size={24} className={textClass} />
-          </motion.button>
-          <motion.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-[#00c896]/20 hover:bg-[#00c896]/40 transition-colors"
-            onClick={handleNext}
-            aria-label="Next testimonial"
-          >
-            <ChevronRight size={24} className={textClass} />
-          </motion.button>
-          <div className="absolute bottom-[-2rem] flex gap-2 justify-center w-full">
+            <ChevronLeft size={22} className="text-[#00c896]" />
+          </button>
+          <div className="flex gap-2">
             {testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrent(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === current ? 'bg-[#00c896] w-6' : 'bg-gray-500'
+                  index === current ? "bg-[#00c896] w-6" : "bg-gray-500/50"
                 }`}
-                aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
           </div>
+          <button
+            onClick={handleNext}
+            className="p-2 rounded-full bg-[#00c896]/20 hover:bg-[#00c896]/40 transition"
+          >
+            <ChevronRight size={22} className="text-[#00c896]" />
+          </button>
         </div>
       </div>
     </section>
