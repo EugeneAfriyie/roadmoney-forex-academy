@@ -18,7 +18,7 @@ interface Package {
   premium?: boolean;
 }
 
-const inPersonPackages: Package[] = [
+export const inPersonPackages: Package[] = [
   {
     name: "Standard Mentorship",
     priceUsd: 120,
@@ -68,7 +68,7 @@ const inPersonPackages: Package[] = [
   },
 ];
 
-const onlinePackages: Package[] = [
+export const onlinePackages: Package[] = [
   {
     name: "Standard Mentorship",
     priceUsd: 90,
