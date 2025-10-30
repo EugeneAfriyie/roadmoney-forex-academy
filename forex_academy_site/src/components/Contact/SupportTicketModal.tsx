@@ -1,23 +1,41 @@
 // src/components/Contact/SupportTicketGlassy.tsx
-// Eugene Afriyie – UEB3502023
-// Enhanced + phone required + all suggested improvements
-
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Headset, X, CheckCircle2, Copy, Check } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 interface SupportTicketProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Optional real API endpoint – falls back to mock */
-  apiEndpoint?: string;
+  emailjsConfig?: {
+    serviceId: string;
+    templateId: string;        // admin template
+    userTemplateId?: string;   // user template (optional)
+    publicKey: string;
+  };
 }
+
+/* -------------------------------------------------
+   Default EmailJS config – replace only if you want
+   to override from the parent component
+   ------------------------------------------------- */
+const DEFAULT_CONFIG = {
+  serviceId: "service_dn1tgt5",
+  templateId: "template_5xoflno",      // ADMIN: To Email = support@roadmoneyacademy.com
+  userTemplateId: "template_xl2wqxw",  // USER:  To Email = {{email}}
+  publicKey: "90H-S_Yy2-bFrluTr",
+};
+
+const COOLDOWN_HOURS = 1;
+const STORAGE_KEY_TIME = "support_last_submit_time";
+const STORAGE_KEY_ID = "support_last_ticket_id";
 
 export default function SupportTicketGlassy({
   isOpen,
   onClose,
-  apiEndpoint,
+  emailjsConfig = DEFAULT_CONFIG,
 }: SupportTicketProps) {
+  /* ------------------- STATE ------------------- */
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,15 +51,65 @@ export default function SupportTicketGlassy({
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [cooldownActive, setCooldownActive] = useState(false);
+  const [remainingTime, setRemainingTime] = useState<string>("");
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  /* -------------------------------------------------------------
-   *  Focus trap + Escape key (refreshed on every open)
-   * ------------------------------------------------------------- */
+  /* ------------------- EMAILJS INIT ------------------- */
+  useEffect(() => {
+    emailjs.init(emailjsConfig.publicKey);
+  }, [emailjsConfig.publicKey]);
+
+  /* ------------------- COOLDOWN LOGIC ------------------- */
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const lastTime = localStorage.getItem(STORAGE_KEY_TIME);
+    const lastId = localStorage.getItem(STORAGE_KEY_ID);
+
+    if (lastTime && lastId) {
+      const elapsed = Date.now() - parseInt(lastTime);
+      const cooldownMs = COOLDOWN_HOURS * 60 * 60 * 1000;
+
+      if (elapsed < cooldownMs) {
+        setCooldownActive(true);
+        setTicketId(lastId);
+        startCountdown(cooldownMs - elapsed);
+      } else {
+        clearCooldown();
+      }
+    }
+  }, [isOpen]);
+
+  const startCountdown = (msLeft: number) => {
+    const update = () => {
+      const remaining =
+        msLeft - (Date.now() - parseInt(localStorage.getItem(STORAGE_KEY_TIME)!));
+      if (remaining <= 0) {
+        clearCooldown();
+        return;
+      }
+      const h = Math.floor(remaining / (1000 * 60 * 60));
+      const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((remaining % (1000 * 60)) / 1000);
+      setRemainingTime(`${h}h ${m}m ${s}s`);
+      setTimeout(update, 1000);
+    };
+    update();
+  };
+
+  const clearCooldown = () => {
+    localStorage.removeItem(STORAGE_KEY_TIME);
+    localStorage.removeItem(STORAGE_KEY_ID);
+    setCooldownActive(false);
+    setTicketId(null);
+    setRemainingTime("");
+  };
+
+  /* ------------------- ACCESSIBILITY ------------------- */
   useEffect(() => {
     if (!isOpen || !modalRef.current) return;
-
     const focusable = modalRef.current.querySelectorAll<HTMLElement>(
       'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
     );
@@ -63,16 +131,11 @@ export default function SupportTicketGlassy({
         }
       }
     };
-
     document.addEventListener("keydown", handler);
     setTimeout(() => first?.focus(), 100);
-
     return () => document.removeEventListener("keydown", handler);
-  }, [isOpen]);
+  }, [isOpen, cooldownActive]);
 
-  /* -------------------------------------------------------------
-   *  Click-outside to close (only when not loading/submitting)
-   * ------------------------------------------------------------- */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (
@@ -88,6 +151,7 @@ export default function SupportTicketGlassy({
     return () => document.removeEventListener("mousedown", handler);
   }, [isOpen, isLoading, isSubmitting]);
 
+  /* ------------------- FORM HANDLERS ------------------- */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -97,17 +161,13 @@ export default function SupportTicketGlassy({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
     if (!formData.name.trim()) newErrors.name = "Name is required.";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required.";
-    } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) {
-      newErrors.email = "Enter a valid email address.";
-    }
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email))
+      newErrors.email = "Invalid email.";
     if (!formData.subject.trim()) newErrors.subject = "Subject is required.";
-    if (!formData.message.trim()) newErrors.message = "Please describe your issue.";
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
-
+    if (!formData.message.trim()) newErrors.message = "Message is required.";
+    if (!formData.phone.trim()) newErrors.phone = "Phone is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -119,35 +179,54 @@ export default function SupportTicketGlassy({
     return `TCK-${date}-${ms}-${rand}`;
   };
 
-  const sendToBackend = async (data: typeof formData, ticketId: string) => {
+  /* ------------------- EMAILJS SEND ------------------- */
+  const sendWithEmailJS = async () => {
+    const newId = generateTicketId();
+    const now = new Date();
+    const date = now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    const time = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+
+    const params = {
+      name: formData.name?.trim() || "—",
+      email: formData.email?.trim() || "—",
+      phone: formData.phone?.trim() || "—",
+      telegram: formData.telegram?.trim() || "—",
+      subject: formData.subject?.trim() || "No subject",
+      message: formData.message?.trim() || "No message",
+      ticket_id: newId,
+      date,
+      time,
+      ticket_url: `https://roadmoneyacademy.com/ticket/${newId}`,
+    };
+
     try {
-      if (apiEndpoint) {
-        const res = await fetch(apiEndpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...data, ticketId }),
-        });
-        return res.ok;
-      }
+      // 1. ADMIN EMAIL (To: support@roadmoneyacademy.com)
+      await emailjs.send(
+        emailjsConfig.serviceId,
+        emailjsConfig.templateId,
+        params,
+        emailjsConfig.publicKey
+      );
 
-      // ---- Mock backend -------------------------------------------------
-      await new Promise((r) => setTimeout(r, 900));
-
-      // 10 % simulated failure
-      if (Math.random() < 0.1) throw new Error("Network error");
-
-      console.log("Ticket submitted:", { ticketId, ...data });
-      return true;
-    } catch (err) {
-      console.error("Submission failed:", err);
-      return false;
+      // 2. USER EMAIL (To: {{email}} in template)
+      await emailjs.send(
+        emailjsConfig.serviceId,
+        emailjsConfig.userTemplateId ?? emailjsConfig.templateId,
+        params,
+        emailjsConfig.publicKey
+      );
+    } catch (err: any) {
+      throw new Error(err?.text || "Failed to send emails");
     }
+
+    localStorage.setItem(STORAGE_KEY_TIME, Date.now().toString());
+    localStorage.setItem(STORAGE_KEY_ID, newId);
+    return newId;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (isSubmitting) return; // double-click guard
+    if (isSubmitting || cooldownActive) return;
 
     setIsSubmitting(true);
     setIsLoading(true);
@@ -159,19 +238,19 @@ export default function SupportTicketGlassy({
       return;
     }
 
-    const newId = generateTicketId();
-    const ok = await sendToBackend(formData, newId);
-
-    if (ok) {
+    try {
+      const newId = await sendWithEmailJS();
       setTicketId(newId);
       setIsSubmitted(true);
+      setCooldownActive(true);
+      startCountdown(COOLDOWN_HOURS * 60 * 60 * 1000);
       setTimeout(() => resetAndClose(), 4500);
-    } else {
-      setGlobalError("Failed to send. Please try again later.");
+    } catch (err: any) {
+      setGlobalError(err?.text || "Failed to send. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+      setIsLoading(false);
     }
-
-    setIsSubmitting(false);
-    setIsLoading(false);
   };
 
   const copyTicketId = async () => {
@@ -194,40 +273,43 @@ export default function SupportTicketGlassy({
     });
     setErrors({});
     setIsSubmitted(false);
-    setTicketId(null);
-    setCopied(false);
     setGlobalError(null);
     onClose();
   };
 
-  const blobVariants = useMemo(
-    () => ({
-      float: {
-        y: [0, -12, 0],
-        x: [0, 8, 0],
-        transition: {
-          duration: 6,
-          repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut",
-        },
+  /* ------------------- ANIMATIONS ------------------- */
+  const blobVariants = useMemo((): Variants => ({
+    float: {
+      y: [0, -12, 0],
+      x: [0, 8, 0],
+      transition: {
+        duration: 6,
+        repeat: Infinity,
+        repeatType: "mirror" as const,
+        ease: "easeInOut",
       },
-    }),
-    []
-  );
+    },
+  }), []);
 
-  /* -------------------------------------------------------------
-   *  Field configuration (centralised – easier to tweak)
-   * ------------------------------------------------------------- */
+  /* ------------------- FIELDS WITH TYPE ------------------- */
   const fields = [
-    { key: "name", label: "Full name*", required: true },
-    { key: "email", label: "Email address*", required: true },
-    { key: "subject", label: "Subject*", required: true, colSpan: true },
-    { key: "message", label: "Describe your issue*", required: true, colSpan: true, textarea: true },
-    { key: "phone", label: "Phone number*", required: true },
-    { key: "telegram", label: "Telegram (optional)", required: false },
+    { key: "name", label: "Full name*", required: true } as const,
+    { key: "email", label: "Email address*", required: true } as const,
+    { key: "subject", label: "Subject*", required: true, colSpan: true } as const,
+    {
+      key: "message",
+      label: "Describe your issue*",
+      required: true,
+      colSpan: true,
+      textarea: true,
+    } as const,
+    { key: "phone", label: "Phone number*", required: true } as const,
+    { key: "telegram", label: "Telegram (optional)", required: false } as const,
   ] as const;
 
+  type Field = typeof fields[number];
+
+  /* ------------------- RENDER ------------------- */
   return (
     <AnimatePresence>
       {isOpen && (
@@ -241,7 +323,7 @@ export default function SupportTicketGlassy({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          {/* Background blobs */}
+          {/* background blobs */}
           <div className="pointer-events-none absolute -top-24 left-8 w-72 h-72 rounded-full blur-3xl bg-[#00ffcc22]" />
           <motion.div
             variants={blobVariants}
@@ -249,7 +331,7 @@ export default function SupportTicketGlassy({
             className="pointer-events-none absolute -bottom-28 right-12 w-72 h-72 rounded-full blur-3xl bg-[#00ffcc18]"
           />
 
-          {/* Main modal */}
+          {/* modal */}
           <motion.div
             ref={modalRef}
             className="relative w-full max-w-2xl rounded-2xl p-1 bg-gradient-to-br from-white/5 to-white/3 border border-[#00ffcc22] shadow-[0_8px_40px_#00ffcc10]"
@@ -260,7 +342,7 @@ export default function SupportTicketGlassy({
           >
             <div className="rounded-2xl bg-[#121826]/70 backdrop-blur-md p-6 md:p-8 border border-[#00ffcc1a]">
               <div className="flex flex-col items-start gap-4">
-                {/* Header */}
+                {/* header */}
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#00c896] via-[#00ffcc] to-[#4ee8ff] flex items-center justify-center shadow-[0_8px_30px_#00ffcc20]">
@@ -278,7 +360,7 @@ export default function SupportTicketGlassy({
                   <button
                     onClick={resetAndClose}
                     disabled={isLoading || isSubmitting}
-                    aria-label="Close support form"
+                    aria-label="Close"
                     className={`rounded-md p-2 hover:bg-[#ffffff06] transition ${
                       isLoading || isSubmitting ? "opacity-40 cursor-not-allowed" : ""
                     }`}
@@ -287,110 +369,129 @@ export default function SupportTicketGlassy({
                   </button>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                  {fields.map((field) => {
-                    const isTextArea = field.textarea;
-                    const errorMsg = errors[field.key];
-                    const commonProps = {
-                      id: field.key,
-                      name: field.key,
-                      value: formData[field.key as keyof typeof formData],
-                      onChange: handleChange,
-                      placeholder: " ",
-                      className: `peer block w-full rounded-lg border ${
-                        errorMsg ? "border-rose-500" : "border-[#ffffff0a]"
-                      } bg-[#0b1220] px-4 py-3 text-sm text-white placeholder-transparent focus:outline-none focus:ring-2 ${
-                        errorMsg ? "focus:ring-rose-500/40" : "focus:ring-[#00ffcc33]"
-                      } ${isTextArea ? "resize-none" : ""}`,
-                    };
-
-                    return (
-                      <div
-                        key={field.key}
-                        className={`relative ${field.colSpan ? "md:col-span-2" : ""}`}
-                      >
-                        {isTextArea ? (
-                          <textarea {...commonProps} rows={5} />
-                        ) : (
-                          <input
-                            {...commonProps}
-                            type={field.key === "email" ? "email" : "text"}
-                          />
-                        )}
-                        <label
-                          htmlFor={field.key}
-                          className="absolute left-3 -top-2.5 text-xs bg-[#121826]/70 px-1 text-[#bfeee8]
-                            peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[#9adfcf] transition-all"
-                        >
-                          {field.label}
-                        </label>
-                        {errorMsg && <p className="text-xs text-rose-400 mt-1">{errorMsg}</p>}
-                      </div>
-                    );
-                  })}
-
-                  {globalError && (
-                    <div className="md:col-span-2 text-center text-sm text-rose-500 mt-1">
-                      {globalError}
+                {/* COOLDOWN SCREEN */}
+                {cooldownActive ? (
+                  <div className="w-full flex flex-col items-center gap-6 py-8">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#00c896] to-[#4ee8ff] flex items-center justify-center shadow-lg">
+                      <CheckCircle2 className="w-10 h-10 text-white" />
                     </div>
-                  )}
-
-                  <div className="md:col-span-2 mt-1">
-                    <motion.button
-                      type="submit"
-                      whileHover={{ scale: isLoading || isSubmitting ? 1 : 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      disabled={isLoading || isSubmitting}
-                      className={`w-full rounded-lg py-3.5 font-semibold shadow-xl transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-[#00c896] via-[#00ffcc] to-[#4ee8ff] text-[#021014] ${
-                        isLoading || isSubmitting ? "opacity-80 cursor-not-allowed" : "hover:brightness-105"
-                      }`}
+                    <div className="text-center">
+                      <h4 className="text-lg font-semibold text-white">
+                        Ticket Already Sent
+                      </h4>
+                      <p className="text-sm text-[#e6ffffcc] mt-1">
+                        Next ticket in:
+                      </p>
+                      <p className="text-2xl font-mono text-[#00ffcc] mt-2">
+                        {remainingTime}
+                      </p>
+                    </div>
+                    {ticketId && (
+                      <div className="inline-flex items-center gap-3 bg-[#0b1220]/60 px-4 py-2 rounded-lg border border-[#00ffcc22]">
+                        <span className="font-mono text-[#bfeee8]">{ticketId}</span>
+                        <motion.button onClick={copyTicketId} className="text-[#bfeee8] hover:text-white">
+                          {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                        </motion.button>
+                      </div>
+                    )}
+                    <button
+                      onClick={resetAndClose}
+                      className="px-6 py-2 rounded-md text-sm font-medium text-white bg-[#00ffcc11] hover:bg-[#00ffcc18]"
                     >
-                      {isLoading ? (
-                        <>
-                          <motion.span
-                            className="w-5 h-5 border-2 border-[#021014] border-t-transparent rounded-full"
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="w-5 h-5 -ml-1"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden
-                          >
-                            <path
-                              d="M2 12L22 12"
-                              stroke="currentColor"
-                              strokeWidth="1.6"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M15 5L21 12L15 19"
-                              stroke="currentColor"
-                              strokeWidth="1.6"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                          Send Message
-                        </>
-                      )}
-                    </motion.button>
+                      Close
+                    </button>
                   </div>
-                </form>
+                ) : (
+                  /* NORMAL FORM */
+                  <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                    {fields.map((field: Field) => {
+                      const isTextArea = "textarea" in field && field.textarea;
+                      const colSpanClass = "colSpan" in field && field.colSpan ? "md:col-span-2" : "";
+                      const errorMsg = errors[field.key];
+                      const commonProps = {
+                        id: field.key,
+                        name: field.key,
+                        value: formData[field.key as keyof typeof formData],
+                        onChange: handleChange,
+                        placeholder: " ",
+                        className: `peer block w-full rounded-lg border ${
+                          errorMsg ? "border-rose-500" : "border-[#ffffff0a]"
+                        } bg-[#0b1220] px-4 py-3 text-sm text-white placeholder-transparent focus:outline-none focus:ring-2 ${
+                          errorMsg ? "focus:ring-rose-500/40" : "focus:ring-[#00ffcc33]"
+                        } ${isTextArea ? "resize-none" : ""}`,
+                      };
+
+                      return (
+                        <div key={field.key} className={`relative ${colSpanClass}`}>
+                          {isTextArea ? (
+                            <textarea {...commonProps} rows={5} />
+                          ) : (
+                            <input
+                              {...commonProps}
+                              type={field.key === "email" ? "email" : "text"}
+                            />
+                          )}
+                          <label
+                            htmlFor={field.key}
+                            className="absolute left-3 -top-2.5 text-xs bg-[#121826]/70 px-1 text-[#bfeee8] peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[#9adfcf] transition-all"
+                          >
+                            {field.label}
+                          </label>
+                          {errorMsg && <p className="text-xs text-rose-400 mt-1">{errorMsg}</p>}
+                        </div>
+                      );
+                    })}
+
+                    {globalError && (
+                      <div className="md:col-span-2 text-center text-sm text-rose-500 mt-1">
+                        {globalError}
+                      </div>
+                    )}
+
+                    <div className="md:col-span-2 mt-1">
+                      <motion.button
+                        type="submit"
+                        whileHover={{ scale: isLoading || isSubmitting ? 1 : 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={isLoading || isSubmitting}
+                        className={`w-full rounded-lg py-3.5 font-semibold shadow-xl transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-[#00c896] via-[#00ffcc] to-[#4ee8ff] text-[#021014] ${
+                          isLoading || isSubmitting ? "opacity-80 cursor-not-allowed" : "hover:brightness-105"
+                        }`}
+                      >
+                        {isLoading ? (
+                          <>
+                            <motion.span
+                              className="w-5 h-5 border-2 border-[#021014] border-t-transparent rounded-full"
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-5 h-5 -ml-1"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              aria-hidden
+                            >
+                              <path d="M2 12L22 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M15 5L21 12L15 19" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            Send Message
+                          </>
+                        )}
+                      </motion.button>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
 
-            {/* Success overlay */}
+            {/* SUCCESS OVERLAY */}
             <AnimatePresence>
-              {isSubmitted && (
+              {isSubmitted && !cooldownActive && (
                 <motion.div
                   className="absolute inset-0 flex items-center justify-center bg-black/40"
                   initial={{ opacity: 0 }}
@@ -408,45 +509,27 @@ export default function SupportTicketGlassy({
                       <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#00c896] to-[#4ee8ff] flex items-center justify-center shadow-lg">
                         <CheckCircle2 className="w-10 h-10 text-white" />
                       </div>
-                      <h4 className="text-lg font-semibold text-white">Ticket Sent</h4>
+                      <h4 className="text-lg font-semibold text-white">Ticket Sent!</h4>
                       <p className="text-sm text-[#e6ffffcc]">
                         Thanks — our team will get back to you soon.
                       </p>
-
-                      {/* Screen-reader live region */}
                       <div aria-live="polite" className="sr-only">
                         Support ticket submitted successfully. Ticket ID: {ticketId}
                       </div>
-
                       {ticketId && (
                         <div className="mt-2 inline-flex items-center gap-3 bg-[#0b1220]/60 px-4 py-2 rounded-lg border border-[#00ffcc22]">
                           <span className="font-mono text-[#bfeee8]">{ticketId}</span>
-                          <motion.button
-                            onClick={copyTicketId}
-                            key={copied ? "copied" : "copy"}
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="text-[#bfeee8] hover:text-white"
-                          >
-                            {copied ? (
-                              <Check className="w-4 h-4 text-emerald-400" />
-                            ) : (
-                              <Copy className="w-4 h-4" />
-                            )}
+                          <motion.button onClick={copyTicketId} className="text-[#bfeee8] hover:text-white">
+                            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                           </motion.button>
                         </div>
                       )}
-
-                      <div className="flex gap-3 mt-4">
-                        <button
-                          onClick={resetAndClose}
-                          className="px-4 py-2 rounded-md text-sm font-medium text-white bg-[#00ffcc11] hover:bg-[#00ffcc18]"
-                        >
-                          Close
-                        </button>
-                      </div>
+                      <button
+                        onClick={resetAndClose}
+                        className="mt-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-[#00ffcc11] hover:bg-[#00ffcc18]"
+                      >
+                        Close
+                      </button>
                     </div>
                   </motion.div>
                 </motion.div>
