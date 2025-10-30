@@ -7,7 +7,7 @@ import MentorshipImpact from "../../components/Plans/MentorshipImpact";
 // import MentorshipPlans from "../../components/Plans/MentorshipPlans";
 import MentorshipCTA from "../../components/Plans/MentorshipCTA";
 import SignalPlans from "../../components/Plans/SignalPlans";
-import ServicesPlans from "../../components/Plans/ServicesPlans";
+// import ServicesPlans from "../../components/Plans/ServicesPlans";
 import MentorshipPlans from "../../components/Plans/TestMentordhip";
 
 
