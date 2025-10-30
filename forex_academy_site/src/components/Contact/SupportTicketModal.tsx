@@ -1,6 +1,6 @@
 // src/components/Contact/SupportTicketGlassy.tsx
 // Eugene Afriyie – UEB3502023
-// Phone field now required (not optional)
+// Enhanced + phone required + all suggested improvements
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,9 +9,15 @@ import { Headset, X, CheckCircle2, Copy, Check } from "lucide-react";
 interface SupportTicketProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Optional real API endpoint – falls back to mock */
+  apiEndpoint?: string;
 }
 
-export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketProps) {
+export default function SupportTicketGlassy({
+  isOpen,
+  onClose,
+  apiEndpoint,
+}: SupportTicketProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +28,7 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -29,88 +36,125 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  // Focus trap + Esc key
+  /* -------------------------------------------------------------
+   *  Focus trap + Escape key (refreshed on every open)
+   * ------------------------------------------------------------- */
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !modalRef.current) return;
+
+    const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+      'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") resetAndClose();
-      if (e.key === "Tab" && modalRef.current) {
-        const focusable = modalRef.current.querySelectorAll(
-          'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        const first = focusable[0] as HTMLElement;
-        const last = focusable[focusable.length - 1] as HTMLElement;
+      if (e.key === "Escape") {
+        resetAndClose();
+        return;
+      }
+      if (e.key === "Tab") {
         if (e.shiftKey && document.activeElement === first) {
           e.preventDefault();
-          last.focus();
+          last?.focus();
         } else if (!e.shiftKey && document.activeElement === last) {
           e.preventDefault();
-          first.focus();
+          first?.focus();
         }
       }
     };
+
     document.addEventListener("keydown", handler);
-    setTimeout(() => modalRef.current?.querySelector("input")?.focus(), 120);
+    setTimeout(() => first?.focus(), 100);
+
     return () => document.removeEventListener("keydown", handler);
   }, [isOpen]);
 
-  // Click outside to close
+  /* -------------------------------------------------------------
+   *  Click-outside to close (only when not loading/submitting)
+   * ------------------------------------------------------------- */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (!isLoading && modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      if (
+        !isLoading &&
+        !isSubmitting &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target as Node)
+      ) {
         resetAndClose();
       }
     };
     if (isOpen) document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [isOpen, isLoading]);
+  }, [isOpen, isLoading, isSubmitting]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+
     if (!formData.name.trim()) newErrors.name = "Name is required.";
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
     } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) {
       newErrors.email = "Enter a valid email address.";
     }
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required.";
-    } else if (!/^[0-9+\-\s()]{7,15}$/.test(formData.phone)) {
-      newErrors.phone = "Enter a valid phone number.";
-    }
     if (!formData.subject.trim()) newErrors.subject = "Subject is required.";
     if (!formData.message.trim()) newErrors.message = "Please describe your issue.";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const generateTicketId = () => {
     const date = new Date().toISOString().slice(2, 10).replace(/-/g, "");
-    const ms = new Date().getMilliseconds();
+    const ms = String(new Date().getMilliseconds()).padStart(3, "0");
     const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
     return `TCK-${date}-${ms}-${rand}`;
   };
 
   const sendToBackend = async (data: typeof formData, ticketId: string) => {
     try {
+      if (apiEndpoint) {
+        const res = await fetch(apiEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...data, ticketId }),
+        });
+        return res.ok;
+      }
+
+      // ---- Mock backend -------------------------------------------------
       await new Promise((r) => setTimeout(r, 900));
+
+      // 10 % simulated failure
+      if (Math.random() < 0.1) throw new Error("Network error");
+
+      console.log("Ticket submitted:", { ticketId, ...data });
       return true;
-    } catch {
+    } catch (err) {
+      console.error("Submission failed:", err);
       return false;
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isSubmitting) return; // double-click guard
+
+    setIsSubmitting(true);
     setIsLoading(true);
     setGlobalError(null);
 
     if (!validateForm()) {
+      setIsSubmitting(false);
       setIsLoading(false);
       return;
     }
@@ -121,12 +165,13 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
     if (ok) {
       setTicketId(newId);
       setIsSubmitted(true);
-      setIsLoading(false);
       setTimeout(() => resetAndClose(), 4500);
     } else {
       setGlobalError("Failed to send. Please try again later.");
-      setIsLoading(false);
     }
+
+    setIsSubmitting(false);
+    setIsLoading(false);
   };
 
   const copyTicketId = async () => {
@@ -139,7 +184,14 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
   };
 
   const resetAndClose = () => {
-    setFormData({ name: "", email: "", subject: "", message: "", phone: "", telegram: "" });
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+      phone: "",
+      telegram: "",
+    });
     setErrors({});
     setIsSubmitted(false);
     setTicketId(null);
@@ -153,11 +205,28 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
       float: {
         y: [0, -12, 0],
         x: [0, 8, 0],
-        transition: { duration: 6, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
+        transition: {
+          duration: 6,
+          repeat: Infinity,
+          repeatType: "mirror",
+          ease: "easeInOut",
+        },
       },
     }),
     []
   );
+
+  /* -------------------------------------------------------------
+   *  Field configuration (centralised – easier to tweak)
+   * ------------------------------------------------------------- */
+  const fields = [
+    { key: "name", label: "Full name*", required: true },
+    { key: "email", label: "Email address*", required: true },
+    { key: "subject", label: "Subject*", required: true, colSpan: true },
+    { key: "message", label: "Describe your issue*", required: true, colSpan: true, textarea: true },
+    { key: "phone", label: "Phone number*", required: true },
+    { key: "telegram", label: "Telegram (optional)", required: false },
+  ] as const;
 
   return (
     <AnimatePresence>
@@ -180,7 +249,7 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
             className="pointer-events-none absolute -bottom-28 right-12 w-72 h-72 rounded-full blur-3xl bg-[#00ffcc18]"
           />
 
-          {/* Modal Card */}
+          {/* Main modal */}
           <motion.div
             ref={modalRef}
             className="relative w-full max-w-2xl rounded-2xl p-1 bg-gradient-to-br from-white/5 to-white/3 border border-[#00ffcc22] shadow-[0_8px_40px_#00ffcc10]"
@@ -208,10 +277,10 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
                   </div>
                   <button
                     onClick={resetAndClose}
-                    disabled={isLoading}
+                    disabled={isLoading || isSubmitting}
                     aria-label="Close support form"
                     className={`rounded-md p-2 hover:bg-[#ffffff06] transition ${
-                      isLoading ? "opacity-40 cursor-not-allowed" : ""
+                      isLoading || isSubmitting ? "opacity-40 cursor-not-allowed" : ""
                     }`}
                   >
                     <X className="w-5 h-5 text-[#e6ffffcc]" />
@@ -220,19 +289,13 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                  {[
-                    { name: "name", label: "Full name*" },
-                    { name: "email", label: "Email address*" },
-                    { name: "phone", label: "Phone*" },
-                    { name: "subject", label: "Subject*" },
-                    { name: "message", label: "Describe your issue*", isTextArea: true },
-                    { name: "telegram", label: "Telegram (optional)" },
-                  ].map(({ name, label, isTextArea }) => {
-                    const errorMsg = errors[name];
+                  {fields.map((field) => {
+                    const isTextArea = field.textarea;
+                    const errorMsg = errors[field.key];
                     const commonProps = {
-                      id: name,
-                      name,
-                      value: formData[name as keyof typeof formData],
+                      id: field.key,
+                      name: field.key,
+                      value: formData[field.key as keyof typeof formData],
                       onChange: handleChange,
                       placeholder: " ",
                       className: `peer block w-full rounded-lg border ${
@@ -241,27 +304,26 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
                         errorMsg ? "focus:ring-rose-500/40" : "focus:ring-[#00ffcc33]"
                       } ${isTextArea ? "resize-none" : ""}`,
                     };
+
                     return (
                       <div
-                        key={name}
-                        className={`relative ${
-                          name === "subject" || name === "message" ? "md:col-span-2" : ""
-                        }`}
+                        key={field.key}
+                        className={`relative ${field.colSpan ? "md:col-span-2" : ""}`}
                       >
                         {isTextArea ? (
                           <textarea {...commonProps} rows={5} />
                         ) : (
                           <input
                             {...commonProps}
-                            type={name === "email" ? "email" : "text"}
+                            type={field.key === "email" ? "email" : "text"}
                           />
                         )}
                         <label
-                          htmlFor={name}
+                          htmlFor={field.key}
                           className="absolute left-3 -top-2.5 text-xs bg-[#121826]/70 px-1 text-[#bfeee8]
                             peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-[#9adfcf] transition-all"
                         >
-                          {label}
+                          {field.label}
                         </label>
                         {errorMsg && <p className="text-xs text-rose-400 mt-1">{errorMsg}</p>}
                       </div>
@@ -277,11 +339,11 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
                   <div className="md:col-span-2 mt-1">
                     <motion.button
                       type="submit"
-                      whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                      whileHover={{ scale: isLoading || isSubmitting ? 1 : 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      disabled={isLoading}
+                      disabled={isLoading || isSubmitting}
                       className={`w-full rounded-lg py-3.5 font-semibold shadow-xl transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-[#00c896] via-[#00ffcc] to-[#4ee8ff] text-[#021014] ${
-                        isLoading ? "opacity-80 cursor-not-allowed" : "hover:brightness-105"
+                        isLoading || isSubmitting ? "opacity-80 cursor-not-allowed" : "hover:brightness-105"
                       }`}
                     >
                       {isLoading ? (
@@ -326,7 +388,7 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
               </div>
             </div>
 
-            {/* Success Modal */}
+            {/* Success overlay */}
             <AnimatePresence>
               {isSubmitted && (
                 <motion.div
@@ -350,6 +412,11 @@ export default function SupportTicketGlassy({ isOpen, onClose }: SupportTicketPr
                       <p className="text-sm text-[#e6ffffcc]">
                         Thanks — our team will get back to you soon.
                       </p>
+
+                      {/* Screen-reader live region */}
+                      <div aria-live="polite" className="sr-only">
+                        Support ticket submitted successfully. Ticket ID: {ticketId}
+                      </div>
 
                       {ticketId && (
                         <div className="mt-2 inline-flex items-center gap-3 bg-[#0b1220]/60 px-4 py-2 rounded-lg border border-[#00ffcc22]">
