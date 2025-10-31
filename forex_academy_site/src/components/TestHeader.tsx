@@ -1,6 +1,6 @@
 // Eugene Afriyie UEB3502023
 import React, { useContext, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Home,
   Info,
@@ -8,11 +8,11 @@ import {
   BookOpen,
   Phone,
   Menu,
-  X,
   Sun,
   Moon,
 } from "lucide-react";
 import { ThemeContext } from "../context/ThemeContext";
+import MobileMenuDrawer from "./MobileMenuDrawer";
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -132,7 +132,7 @@ const Header: React.FC = () => {
           </motion.a>
         ))}
 
-        {/* Menu button moved to far right */}
+        {/* Menu button (moved to far right) */}
         <button
           onClick={() => setMenuOpen(true)}
           className={`flex flex-col items-center ${textClass}`}
@@ -142,59 +142,15 @@ const Header: React.FC = () => {
         </button>
       </motion.nav>
 
-      {/* ===== Mobile Menu Popup (Drawer) ===== */}
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            <motion.div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMenuOpen(false)}
-            />
-
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ duration: 0.3 }}
-              className={`fixed top-0 left-0 h-full w-3/4 ${bgClass} p-6 z-50 flex flex-col space-y-6`}
-            >
-              <div className="flex justify-between items-center">
-                <h2 className={`text-lg font-semibold ${accentClass}`}>
-                  Menu
-                </h2>
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="text-gray-400 hover:text-[#00c896]"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              <ul className="flex flex-col space-y-4 mt-4">
-                {navLinks.map((link) => (
-                  <li key={link.name}>
-                    <a
-                      href={link.href}
-                      onClick={() => {
-                        setActive(link.name);
-                        setMenuOpen(false);
-                      }}
-                      className={`block ${
-                        active === link.name ? accentClass : textClass
-                      } hover:text-[#00c896]`}
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      {/* Mobile Drawer Component */}
+      <MobileMenuDrawer
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        navLinks={navLinks}
+        active={active}
+        setActive={setActive}
+        theme={theme}
+      />
     </>
   );
 };
