@@ -1,5 +1,5 @@
 // Eugene Afriyie UEB3502023
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Home,
@@ -13,23 +13,27 @@ import {
 } from "lucide-react";
 import { ThemeContext } from "../context/ThemeContext";
 import MobileMenuDrawer from "./MobileMenuDrawer";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const [active, setActive] = useState("Home");
+  const location = useLocation();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Hide navbar on scroll down
+  // Hide mobile navbar on scroll down
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) setIsVisible(false);
-      else setIsVisible(true);
+    const onScroll = () => {
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
       setLastScrollY(window.scrollY);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, [lastScrollY]);
 
   const bgClass =
@@ -47,6 +51,13 @@ const Header: React.FC = () => {
     { name: "Contact", icon: <Phone size={22} />, href: "/contact" },
   ];
 
+  // Get active name from URL (for underline + highlighting)
+  const getActiveName = () => {
+    return navLinks.find((link) => link.href === location.pathname)?.name ?? "Home";
+  };
+
+  const active = getActiveName();  // No need for useState – derived from URL
+
   return (
     <>
       {/* ===== Desktop Header ===== */}
@@ -54,37 +65,49 @@ const Header: React.FC = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className={`hidden md:flex justify-between items-center fixed top-0 left-0 w-full z-50 px-6 py-4 ${bgClass} shadow-md`}
+        className={`hidden md:flex justify-between items-center fixed top-0 left-0 w-full z-50 px-6 py-4 ${bgClass} shadow-md transition-all duration-300`}
       >
         <h1 className={`text-2xl font-bold ${accentClass} font-montserrat`}>
           RoadMoney Forex Academy
         </h1>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-8">
           {navLinks.map((link) => (
-            <motion.a
+            <NavLink
               key={link.name}
-              href={link.href}
-              onClick={() => setActive(link.name)}
-              className={`relative ${
-                active === link.name ? accentClass : textClass
-              } hover:text-[#00c896] transition`}
-              whileHover={{ scale: 1.05 }}
+              to={link.href}
+              end={link.href === "/"}  // Exact match for Home only
+              className={({ isActive }) =>
+                `relative font-medium transition-colors ${
+                  isActive ? accentClass : textClass
+                } hover:text-[#00c896]`
+              }
             >
-              {link.name}
-              {active === link.name && (
-                <motion.span
-                  layoutId="activeIndicator"
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-[#00c896] rounded-full"
-                />
+              {({ isActive }) => (
+                <>
+                  <motion.span
+                    whileHover={{ scale: 1.05 }}
+                    className="inline-block"
+                  >
+                    {link.name}
+                  </motion.span>
+                  {isActive && (
+                    <motion.span
+                      layoutId="desktopActive"
+                      className="absolute -bottom-1 left-0 w-full h-0.5 bg-[#00c896] rounded-full"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      initial={false}  // Prevent animation on mount
+                    />
+                  )}
+                </>
               )}
-            </motion.a>
+            </NavLink>
           ))}
 
-          {/* Join Now Button (desktop only) */}
+          {/* Join Now Button */}
           <motion.a
             href="/mentorship"
-            className="px-4 py-2 bg-[#00c896] text-white rounded-2xl hover:bg-[#00b589] transition"
+            className="px-5 py-2.5 bg-[#00c896] text-white rounded-2xl font-medium hover:bg-[#00b589] transition"
             whileHover={{ scale: 1.05 }}
           >
             Join Now
@@ -93,10 +116,14 @@ const Header: React.FC = () => {
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-[#00c896]/20"
+            className="p-2 rounded-full hover:bg-[#00c896]/20 transition"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            {theme === "dark" ? (
+              <Sun size={20} className="text-yellow-400" />
+            ) : (
+              <Moon size={20} className="text-slate-700" />
+            )}
           </button>
         </div>
       </motion.header>
@@ -109,36 +136,50 @@ const Header: React.FC = () => {
           opacity: isVisible ? 1 : 0,
         }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
-        className={`fixed bottom-0 left-0 w-full md:hidden flex justify-between items-center py-3 px-6 ${bgClass} shadow-t z-50`}
+        className={`fixed bottom-0 left-0 w-full md:hidden flex justify-around items-center py-3 px-4 ${bgClass} shadow-2xl z-50 border-t border-white/10`}
       >
         {navLinks.map((link) => (
-          <motion.a
+          <NavLink
             key={link.name}
-            href={link.href}
-            onClick={() => setActive(link.name)}
-            className={`flex flex-col items-center ${
-              active === link.name ? "text-[#00c896]" : textClass
-            } transition-all`}
-            whileHover={{ scale: 1.05 }}
+            to={link.href}
+            end={link.href === "/"}
+            className={({ isActive }) =>
+              `flex flex-col items-center space-y-1 transition-all ${
+                isActive ? "text-[#00c896]" : textClass
+              }`
+            }
           >
-            <div
-              className={`p-2 rounded-full ${
-                active === link.name ? "bg-[#00c896]/10" : ""
-              }`}
-            >
-              {link.icon}
-            </div>
-            <span className="text-xs mt-1">{link.name}</span>
-          </motion.a>
+            {({ isActive }) => (
+              <>
+                <div
+                  className={`p-2.5 rounded-xl transition-colors ${
+                    isActive ? "bg-[#00c896]/15" : ""
+                  }`}
+                >
+                  {link.icon}
+                </div>
+                <span className="text-xs font-medium">{link.name}</span>
+                <motion.span
+                  layoutId="mobileActive"
+                  className={`h-1 w-1 rounded-full mt-1 ${
+                    isActive ? "bg-[#00c896]" : "bg-transparent"
+                  }`}
+                  initial={false}
+                />
+              </>
+            )}
+          </NavLink>
         ))}
 
-        {/* Menu button (moved to far right) */}
+        {/* Menu Button */}
         <button
           onClick={() => setMenuOpen(true)}
-          className={`flex flex-col items-center ${textClass}`}
+          className={`flex flex-col items-center space-y-1 ${textClass}`}
         >
-          <Menu size={22} />
-          <span className="text-xs mt-1">Menu</span>
+          <div className="p-2.5 rounded-xl">
+            <Menu size={22} />
+          </div>
+          <span className="text-xs font-medium">Menu</span>
         </button>
       </motion.nav>
 
@@ -148,7 +189,7 @@ const Header: React.FC = () => {
         setMenuOpen={setMenuOpen}
         navLinks={navLinks}
         active={active}
-        setActive={setActive}
+        setActive={() => {}}  // No-op – drawer can use same `getActiveName()` logic if needed
         theme={theme}
       />
     </>
