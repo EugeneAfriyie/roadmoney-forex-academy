@@ -6,6 +6,7 @@ import About from './Pages/About/About';
 import Plans from './Pages/Plans/Plans';
 import Contact from './Pages/Contact/Contact';
 import Header from './components/TestHeader';
+import Resources from './Pages/Resources/Resources';
 // import Contact from './Pages/Contact/Contact';
 
 const App: React.FC = () => {
@@ -18,6 +19,7 @@ const App: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/resources" element={<Resources />} />
       </Routes>
       <Footer />
     </>
