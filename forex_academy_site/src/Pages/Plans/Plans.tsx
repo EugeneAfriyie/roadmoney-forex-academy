@@ -9,6 +9,7 @@ import MentorshipCTA from "../../components/Plans/MentorshipCTA";
 import SignalPlans from "../../components/Plans/SignalPlans";
 // import ServicesPlans from "../../components/Plans/ServicesPlans";
 import MentorshipPlans from "../../components/Plans/TestMentordhip";
+import SmartTradingQuiz from "../../components/Home/QuoteCard/Quiz";
 
 
 const Mentorship: React.FC = () => {
@@ -24,6 +25,7 @@ const Mentorship: React.FC = () => {
       <MentorshipHero />
       <MentorshipCurriculum />
       <MentorshipImpact />
+      <SmartTradingQuiz />
       <MentorshipPlans />
       <SignalPlans />
       {/* <ServicesPlans /> */}

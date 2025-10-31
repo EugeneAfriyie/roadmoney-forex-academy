@@ -1,29 +1,18 @@
 // Eugene Afriyie UEB3502023
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Instagram, MessageCircle, Send } from "lucide-react";
-import { Link } from "react-router-dom";
+import { X, Instagram, MessageCircle, Send, Facebook, Mail } from "lucide-react";
 
-interface MobileMenuDrawerProps {
-  menuOpen: boolean;
-  setMenuOpen: (open: boolean) => void;
-  navLinks: { name: string; icon: JSX.Element; href: string }[];
-  active: string;
-  setActive: (name: string) => void;
-  theme: string;
-}
-
-const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
+const MobileMenuDrawer = ({
   menuOpen,
   setMenuOpen,
   navLinks,
   active,
   setActive,
   theme,
-}) => {
+}: any) => {
   const bgClass =
-    theme === "dark"
-      ? "bg-[#0b0f19]/95 text-white"
-      : "bg-[#f8f9fb]/95 text-[#1a1a1a]";
+    theme === "dark" ? "bg-[#0b0f19]" : "bg-[#f8f9fb]";
+  const textClass = theme === "dark" ? "text-white" : "text-[#1a1a1a]";
   const accentClass = "text-[#00c896]";
 
   return (
@@ -33,96 +22,113 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`fixed inset-0 z-50 flex flex-col justify-between ${bgClass}`}
+          className="fixed inset-0 z-50 flex justify-center items-center bg-black/70 backdrop-blur-sm"
         >
-          {/* ===== Scrollable Content ===== */}
-          <div className="overflow-y-auto pb-28">
-            {/* Close Button */}
-            <div className="flex justify-end p-5">
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="p-2 rounded-full hover:bg-[#00c896]/10 transition"
-              >
-                <X size={24} />
-              </button>
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 120, damping: 15 }}
+            className={`relative w-full h-full overflow-y-auto ${bgClass} flex flex-col`}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="absolute top-5 right-6 p-2 rounded-full bg-[#00c896]/10 hover:bg-[#00c896]/20"
+            >
+              <X size={24} className={accentClass} />
+            </button>
+
+            {/* ===== HERO SECTION ===== */}
+            <div
+              className="relative flex flex-col justify-center items-center text-center px-6 mt-20 mb-8 h-56 bg-cover bg-center rounded-2xl mx-4"
+              style={{
+                backgroundImage:
+                  "url('https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg')",
+              }}
+            >
+              <div className="absolute inset-0 bg-black/60 rounded-2xl" />
+              <div className="relative z-10">
+                <h1 className={`text-3xl font-bold ${accentClass}`}>RoadMoney Forex Academy</h1>
+                <p className="mt-2 text-sm text-white/90">
+                  Master the Art of Trading
+                </p>
+              </div>
             </div>
 
-            {/* Hero Section */}
-            <section className="flex flex-col items-center text-center px-6">
-              <h2 className={`text-2xl font-bold mb-2 ${accentClass}`}>
-                RoadMoney Forex Academy
-              </h2>
-              <p className="text-sm text-muted-foreground max-w-xs">
-                Learn professional forex trading with mentorship and practical guidance.
-              </p>
-            </section>
-
-            {/* Quick Links */}
-            <section className="mt-10 flex flex-col items-center gap-5 px-6">
-              <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
-              {navLinks.map((link) => (
-                <Link
+            {/* ===== QUICK LINKS ===== */}
+            <div className="px-8 flex flex-col space-y-5">
+              {navLinks.map((link: any, ) => (
+                <motion.a
                   key={link.name}
-                  to={link.href}
+                  href={link.href}
                   onClick={() => {
                     setActive(link.name);
                     setMenuOpen(false);
                   }}
-                  className={`w-full max-w-xs text-left p-4 rounded-2xl border ${
-                    active === link.name
-                      ? "border-[#00c896] bg-[#00c896]/10"
-                      : "border-transparent hover:bg-[#00c896]/10"
-                  } transition`}
+                  whileHover={{ scale: 1.05, x: 5 }}
+                  className={`flex justify-between items-center border-b pb-3 ${
+                    active === link.name ? accentClass : textClass
+                  }`}
                 >
-                  <p
-                    className={`font-medium ${
-                      active === link.name ? accentClass : ""
-                    }`}
-                  >
-                    {link.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {link.name === "Home"
-                      ? "Back to the main page"
-                      : link.name === "About"
-                      ? "Learn more about us"
-                      : link.name === "Plans"
-                      ? "Explore our mentorship plans"
-                      : link.name === "Resources"
-                      ? "Educational materials"
-                      : "Get in touch"}
-                  </p>
-                </Link>
+                  <div>
+                    <h3 className="text-lg font-semibold">{link.name}</h3>
+                    <p className="text-xs opacity-70">
+                      {link.name === "Home"
+                        ? "Return to the homepage"
+                        : link.name === "About"
+                        ? "Learn more about us"
+                        : link.name === "Plans"
+                        ? "Explore mentorship plans"
+                        : link.name === "Resources"
+                        ? "View trading resources"
+                        : "Get in touch with us"}
+                    </p>
+                  </div>
+                  {link.icon}
+                </motion.a>
               ))}
-            </section>
+            </div>
 
-            {/* Social Media Section */}
-            <section className="mt-10 flex flex-col items-center gap-3 pb-8">
-              <h3 className="text-lg font-semibold">Connect with us</h3>
-              <div className="flex gap-5">
-                <a href="#" className="p-2 rounded-full hover:bg-[#00c896]/10">
-                  <Instagram className="w-5 h-5" />
+            {/* ===== CONTACT / SOCIALS ===== */}
+            <div className="mt-10 px-8 flex flex-col items-center space-y-4">
+              <p className={`text-sm ${textClass} opacity-80 mb-2`}>
+                Connect with us
+              </p>
+              <div className="flex space-x-5">
+                <a href="#" className="hover:scale-110 transition" aria-label="Instagram">
+                  <Instagram className={accentClass} />
                 </a>
-                <a href="#" className="p-2 rounded-full hover:bg-[#00c896]/10">
-                  <Send className="w-5 h-5" /> {/* Telegram */}
+                <a href="#" className="hover:scale-110 transition" aria-label="Telegram">
+                  <Send className={accentClass} />
                 </a>
-                <a href="#" className="p-2 rounded-full hover:bg-[#00c896]/10">
-                  <MessageCircle className="w-5 h-5" /> {/* WhatsApp */}
+                <a href="#" className="hover:scale-110 transition" aria-label="WhatsApp">
+                  <MessageCircle className={accentClass} />
+                </a>
+                <a href="#" className="hover:scale-110 transition" aria-label="Facebook">
+                  <Facebook className={accentClass} />
+                </a>
+                <a
+                  href="mailto:groupeight00@gmail.com"
+                  className="hover:scale-110 transition"
+                  aria-label="Email"
+                >
+                  <Mail className={accentClass} />
                 </a>
               </div>
-            </section>
-          </div>
+            </div>
 
-          {/* ===== Fixed Join Button ===== */}
-          <div className="fixed bottom-0 left-0 w-full bg-[#00c896] py-4 flex justify-center shadow-lg">
-            <Link
-              to="/mentorship"
-              onClick={() => setMenuOpen(false)}
-              className="px-8 py-3 bg-white text-[#00c896] rounded-full font-semibold hover:bg-gray-100 transition"
-            >
-              Join Now
-            </Link>
-          </div>
+            {/* ===== JOIN BUTTON ===== */}
+            <div className="mt-auto px-8 mb-10">
+              <motion.a
+                href="/mentorship"
+                whileHover={{ scale: 1.05 }}
+                className="block text-center py-3 rounded-2xl bg-[#00c896] text-white font-semibold"
+              >
+                Join Now
+              </motion.a>
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
