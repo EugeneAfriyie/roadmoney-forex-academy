@@ -1,47 +1,56 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-
-const categories = ["All", "Articles", "Videos", "E-books", "Tools"];
+import { Filter } from "lucide-react";
 
 interface ResourceFilterProps {
-  onFilterChange: (category: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
 }
 
-const ResourceFilter: React.FC<ResourceFilterProps> = ({ onFilterChange }) => {
-  const [activeCategory, setActiveCategory] = useState("All");
+const categories = [
+  "All",
+  "Trading Psychology",
+  "Market Structure",
+  "Risk Management",
+  "Guides",
+];
 
-  const handleCategoryClick = (category: string) => {
-    setActiveCategory(category);
-    onFilterChange(category);
-  };
-
+const ResourceFilter: React.FC<ResourceFilterProps> = ({
+  selectedCategory,
+  setSelectedCategory,
+}) => {
   return (
-    <section className="py-10 bg-transparent font-montserrat">
-      <div className="max-w-5xl mx-auto px-6 flex flex-wrap justify-center gap-4 sm:gap-6">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      viewport={{ once: true }}
+      className="flex flex-wrap justify-center gap-4 mb-12 px-4"
+    >
+      <div className="flex items-center gap-2 text-white/60 text-sm sm:text-base">
+        <Filter size={18} className="text-[#00c896]" />
+        <span>Filter by Category</span>
+      </div>
+
+      <div className="flex flex-wrap justify-center gap-3">
         {categories.map((category) => (
           <motion.button
             key={category}
-            onClick={() => handleCategoryClick(category)}
-            className={`relative px-5 py-2 sm:px-6 sm:py-2.5 rounded-full font-semibold transition-all duration-300 ${
-              activeCategory === category
-                ? "bg-[#00c896] text-black"
-                : "bg-white/10 text-white/80 hover:bg-white/20"
-            }`}
+            onClick={() => setSelectedCategory(category)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            className={`px-4 py-2 rounded-full text-sm sm:text-base font-semibold transition-all duration-300
+              ${
+                selectedCategory === category
+                  ? "bg-[#00c896] text-black shadow-[0_0_20px_rgba(0,200,150,0.5)]"
+                  : "bg-white/10 text-white hover:bg-white/20"
+              }`}
           >
             {category}
-            {activeCategory === category && (
-              <motion.div
-                layoutId="active-category"
-                className="absolute inset-0 border border-[#00c896] rounded-full"
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              />
-            )}
           </motion.button>
         ))}
       </div>
-    </section>
+    </motion.div>
   );
 };
 
