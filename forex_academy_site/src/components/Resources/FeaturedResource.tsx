@@ -4,23 +4,23 @@ import { ArrowRight } from "lucide-react";
 
 const FeaturedResource: React.FC = () => {
   const featured = {
-    title: "Weekly Market Blueprint",
+    title: "Accra In-Person Trading Academy Launch",
     description:
-      "Stay ahead of the markets every week with detailed structure analysis, key levels, and institutional insights — all from our lead mentor.",
+      "We’ve officially opened our first in-person trading academy in Accra! Experience live mentorship, structured forex education, and community-driven growth directly with our lead mentors.",
     image:
-      "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1200&h=600&fit=crop",
-    link: "#",
+      "https://res.cloudinary.com/djeorsh5d/image/upload/v1760408679/IMG_20251014_022039_477_ri1daj.jpg",
+    link: "/mentorship#in-person", // placeholder — update with your actual route later
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.8 }}
       viewport={{ once: true }}
-      className="relative rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,200,150,0.1)] mb-16"
+      className="relative rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,200,150,0.15)] mb-16"
     >
-      {/* Background Image */}
+      {/* Background image */}
       <div className="relative">
         <img
           src={featured.image}
@@ -30,8 +30,8 @@ const FeaturedResource: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b0f19]/90 via-[#0b0f19]/70 to-transparent" />
       </div>
 
-      {/* Text Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full flex items-center px-6 sm:px-10 md:px-16">
+      {/* Text overlay */}
+      <div className="absolute inset-0 flex items-center px-6 sm:px-10 md:px-16">
         <div className="max-w-xl">
           <motion.h3
             initial={{ opacity: 0, y: 10 }}
@@ -41,6 +41,7 @@ const FeaturedResource: React.FC = () => {
           >
             {featured.title}
           </motion.h3>
+
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -58,7 +59,7 @@ const FeaturedResource: React.FC = () => {
             className="inline-flex items-center gap-2 mt-5 px-6 py-3 bg-[#00c896] text-black font-semibold rounded-full 
                        hover:scale-105 hover:shadow-[0_0_25px_rgba(0,200,150,0.5)] transition-all duration-300"
           >
-            Read Weekly Insights <ArrowRight size={18} />
+            Explore the Academy <ArrowRight size={18} />
           </motion.a>
         </div>
       </div>

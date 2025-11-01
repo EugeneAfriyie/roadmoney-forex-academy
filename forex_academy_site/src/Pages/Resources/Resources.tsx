@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import ResourceGrid from "../../components/Resources/ResourceGrid";
-import ResourceFilter from "../../components/Resources/ResourceFilter";
 import FeaturedResource from "../../components/Resources/FeaturedResource";
+import ResourceFilter from "../../components/Resources/ResourceFilter";
+import ResourceGrid from "../../components/Resources/ResourceGrid";
+
 
 const ResourcesPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -11,14 +12,17 @@ const ResourcesPage: React.FC = () => {
     {
       id: 1,
       title: "Mastering Market Structure",
-      category: "Articles",
+      category: "Market Structure",
+      author: "Eugene Afriyie",
+      date: "2025-10-18",
       description:
         "Understand how to read the market like a pro with practical examples and chart breakdowns.",
       fullText: `
 ### Understanding Market Structure
+
 Market structure is the foundation of all trading decisions. It represents the way price moves between highs and lows, forming trends and ranges.
 
-Professional traders identify *higher highs* and *higher lows* to determine bullish momentum — and the opposite for bearish setups.
+Professional traders identify **higher highs** and **higher lows** to determine bullish momentum — and the opposite for bearish setups.
 
 #### Key Concepts:
 - Break of structure (BOS)
@@ -26,35 +30,51 @@ Professional traders identify *higher highs* and *higher lows* to determine bull
 - Liquidity grabs
 - Institutional order flow
 
-By mastering market structure, you gain clarity on what the market is doing — instead of guessing.`,
-      image: "https://images.unsplash.com/photo-1581093588401-22a3f8f2435c?w=800&h=500&fit=crop",
+By mastering market structure, you gain clarity on what the market is doing — instead of guessing.
+
+![Example Chart](https://images.unsplash.com/photo-1581093588401-22a3f8f2435c?w=1400)
+      `,
+      image:
+        "https://images.unsplash.com/photo-1581093588401-22a3f8f2435c?w=1200&h=700&fit=crop",
     },
     {
       id: 2,
       title: "Risk Management Webinar",
       category: "Videos",
+      author: "RoadMoney Team",
+      date: "2025-10-10",
       description:
         "Watch a complete breakdown of professional risk management strategies for consistent profits.",
-      link: "https://youtube.com", // external link
-      image: "https://images.unsplash.com/photo-1605902711622-cfb43c4437d1?w=800&h=500&fit=crop",
+      link: "https://youtube.com/watch?v=dQw4w9WgXcQ",
+      video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      image:
+        "https://images.unsplash.com/photo-1605902711622-cfb43c4437d1?w=1200&h=700&fit=crop",
     },
     {
       id: 3,
       title: "Trading Psychology E-Book",
       category: "Guides",
+      author: "RoadMoney Mentor",
+      date: "2025-09-30",
       description:
         "Build mental discipline, stay focused, and overcome emotional trading with this free e-book.",
       fullText: `
 ### Mastering Trading Psychology
+
 Emotions are a trader’s greatest enemy. Fear, greed, and impatience destroy consistency.
 
 This guide teaches:
 - How to build emotional resilience
 - Practical journaling methods
 - How to detach your identity from results
-- The role of faith and routine in discipline`,
-      image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&h=500&fit=crop",
+- The role of routine in discipline
+
+![Journal Example](https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1400)
+      `,
+      image:
+        "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1200&h=700&fit=crop",
     },
+    // add more resources as needed
   ];
 
   return (
@@ -71,24 +91,26 @@ This guide teaches:
             Resources & Learning Hub
           </h1>
           <p className="text-white/70 text-base sm:text-lg max-w-2xl mx-auto">
-            Explore in-depth articles, trading guides, and webinar replays crafted to elevate your trading journey.
+            Explore in-depth articles, trading guides, webinar replays and announcements crafted to elevate your trading journey.
           </p>
         </motion.div>
 
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_bottom_right,rgba(0,200,150,0.05),transparent_70%)] -z-10" />
       </section>
 
-      <FeaturedResource />
+      <div className="max-w-7xl mx-auto px-6">
+        <FeaturedResource />
 
-      <ResourceFilter
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
+        <ResourceFilter
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
 
-      <ResourceGrid
-        resources={resources}
-        selectedCategory={selectedCategory}
-      />
+        <ResourceGrid
+          resources={resources}
+          selectedCategory={selectedCategory}
+        />
+      </div>
     </main>
   );
 };
