@@ -59,7 +59,7 @@ export default function Header() {
                 <li key={label}>
                   <NavLink
                     to={to}
-                    end={to === "/"}               {/* exact only for Home */}
+                    end={to === "/"}               
                     className={({ isActive }) =>
                       `relative group transition-colors ${
                         isActive ? "text-[#00c896] font-semibold" : "hover:text-[#00c896]"

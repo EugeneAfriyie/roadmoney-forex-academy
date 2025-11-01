@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import  { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Link2, Copy, ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";

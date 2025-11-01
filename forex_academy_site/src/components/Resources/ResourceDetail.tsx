@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
@@ -8,12 +7,13 @@ const ResourceDetail: React.FC = () => {
   const { state: resource } = useLocation();
   const navigate = useNavigate();
 
-  if (!resource)
+  if (!resource) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
         Resource not found.
       </div>
     );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0b0f19] via-[#121826] to-[#0b0f19] text-white font-montserrat py-16 px-6 sm:px-10 md:px-24">
@@ -43,9 +43,10 @@ const ResourceDetail: React.FC = () => {
         {resource.title}
       </motion.h1>
 
-      <ReactMarkdown className="prose prose-invert prose-p:text-white/80 prose-headings:text-[#00c896] max-w-none leading-relaxed">
-        {resource.fullText}
-      </ReactMarkdown>
+      {/* ---- FIXED: ReactMarkdown does NOT accept className ---- */}
+      <div className="prose prose-invert prose-p:text-white/80 prose-headings:text-[#00c896] max-w-none leading-relaxed">
+        <ReactMarkdown>{resource.fullText}</ReactMarkdown>
+      </div>
     </main>
   );
 };

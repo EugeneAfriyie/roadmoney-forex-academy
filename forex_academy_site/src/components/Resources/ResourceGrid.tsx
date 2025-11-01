@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import ResourceModal from "./ResourceModal";
 
 interface Resource {
@@ -22,7 +22,7 @@ interface ResourceGridProps {
 }
 
 const ResourceGrid: React.FC<ResourceGridProps> = ({ resources, selectedCategory }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [active, setActive] = useState<Resource | null>(null);
 
   const filteredResources =
